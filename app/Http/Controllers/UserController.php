@@ -8,6 +8,35 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    // Fungsi Login
+    public function login(Request $request)
+    {
+        // Validasi data yang dikirimkan dalam request
+        $validatedData = $request->validate([
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        // Cek kredensial (username dan password)
+        if (Auth::attempt(['username' => $validatedData['username'], 'password' => $validatedData['password']])) {
+            $user = Auth::user();
+
+            // Mengembalikan response dengan token jika login berhasil
+            $token = $user->createToken('YourAppName')->plainTextToken;
+
+            return response()->json([
+                'message' => 'Login berhasil.',
+                'user' => $user,
+                'token' => $token,
+            ]);
+        }
+
+        // Jika login gagal
+        return response()->json([
+            'message' => 'Username atau password salah.',
+        ], 401);
+    }
+    
     // Membuat User Baru (Register)
     public function register(Request $request)
     {

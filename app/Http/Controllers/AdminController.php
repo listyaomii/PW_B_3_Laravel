@@ -10,6 +10,33 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
+    // Fungsi Login untuk Admin
+    public function login(Request $request)
+    {
+        // Validasi data yang dikirimkan dalam request
+        $validatedData = $request->validate([
+            'email_admin' => 'required|string|email',
+            'password_admin' => 'required|string',
+        ]);
+
+        // Cek kredensial (email dan password)
+        $admin = Admin::where('email_admin', $validatedData['email_admin'])->first();
+
+        if (!$admin || !Hash::check($validatedData['password_admin'], $admin->password_admin)) {
+            return response()->json([
+                'message' => 'Email atau password salah.',
+            ], 401);
+        }
+
+        // Menghasilkan token jika login berhasil
+        $token = $admin->createToken('AdminApp')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login berhasil.',
+            'admin' => $admin,
+            'token' => $token,
+        ]);
+    }
     // Display a listing of the admins
     public function index()
     {
