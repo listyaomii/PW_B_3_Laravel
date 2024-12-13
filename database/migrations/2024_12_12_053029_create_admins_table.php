@@ -16,6 +16,7 @@ class CreateAdminsTable extends Migration
         Schema::create('admins', function (Blueprint $table) {
             $table->id('id_admin'); // Primary key
             $table->string('nama_admin'); // Nama admin
+            $table->string('username_admin');
             $table->string('email_admin')->unique(); // Email admin yang unik
             $table->string('password_admin'); // Password admin
             $table->timestamps(); // Kolom created_at dan updated_at

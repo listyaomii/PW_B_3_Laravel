@@ -13,25 +13,14 @@ use App\Http\Controllers\TiketController;
 
 // Rute untuk login admin
 Route::post('/admin/login', [AdminController::class, 'login']);
+Route::post('/admin/register', [AdminController::class, 'register']);
 
 // Rute untuk login user
 Route::post('/user/login', [UserController::class, 'login']);
-
-// Rute untuk registrasi user
-Route::post('/user/register', [UserController::class, 'register']);
+Route::post('/user/register', [UserController::class, 'register'])->name('user.register');
 
 // Rute yang dilindungi dengan autentikasi Sanctum
 Route::middleware('auth:sanctum')->group(function () {
-
-    // Admin Routes
-    Route::get('/admin', [AdminController::class, 'index']);
-    Route::post('/admin', [AdminController::class, 'store']);
-    Route::get('/admin/{id}', [AdminController::class, 'show']);
-    Route::put('/admin/{id}', [AdminController::class, 'update']);
-    Route::delete('/admin/{id}', [AdminController::class, 'destroy']);
-    Route::get('/admin/{id}/users', [AdminController::class, 'users']);
-    Route::get('/admin/{id}/penerbangan', [AdminController::class, 'penerbangan']);
-    Route::get('/admin/{id}/refunds', [AdminController::class, 'refunds']);
 
     // User Routes
     Route::get('/user', [UserController::class, 'index']);
@@ -58,12 +47,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/pemesanan/{id}', [PemesananController::class, 'update']);
     Route::delete('/pemesanan/{id}', [PemesananController::class, 'destroy']);
 
-    // Penerbangan Routes
+    // Penerbangan Routes - Untuk Semua (Read Only)
     Route::get('/penerbangan', [PenerbanganController::class, 'index']);
     Route::get('/penerbangan/{id}', [PenerbanganController::class, 'show']);
-    Route::post('/penerbangan', [PenerbanganController::class, 'store']);
-    Route::put('/penerbangan/{id}', [PenerbanganController::class, 'update']);
-    Route::delete('/penerbangan/{id}', [PenerbanganController::class, 'destroy']);
 
     // Penumpang Routes
     Route::get('/penumpang', [PenumpangController::class, 'index']);
@@ -85,4 +71,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tiket', [TiketController::class, 'store']);
     Route::put('/tiket/{id}', [TiketController::class, 'update']);
     Route::delete('/tiket/{id}', [TiketController::class, 'destroy']);
+});
+
+Route::middleware('auth:sacntum', 'admin')->group(function () {
+    Route::get('/admin', [AdminController::class, 'index']);
+    Route::post('/admin', [AdminController::class, 'store']);
+    Route::get('/admin/{id}', [AdminController::class, 'show']);
+    Route::put('/admin/{id}', [AdminController::class, 'update']);
+    Route::delete('/admin/{id}', [AdminController::class, 'destroy']);
+    Route::get('/admin/{id}/users', [AdminController::class, 'users']);
+    Route::get('/admin/{id}/penerbangan', [AdminController::class, 'penerbangan']);
+    Route::get('/admin/{id}/refunds', [AdminController::class, 'refunds']);
+
+    // Penerbangan Routes - Khusus Admin
+    Route::post('/penerbangan', [PenerbanganController::class, 'store']);
+    Route::put('/penerbangan/{id}', [PenerbanganController::class, 'update']);
+    Route::delete('/penerbangan/{id}', [PenerbanganController::class, 'destroy']);
 });

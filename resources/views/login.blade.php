@@ -62,6 +62,13 @@
         <h2>Log in</h2>
         <form id="loginForm">
             <div class="mb-3">
+                <label for="role" class="form-label">Login Sebagai</label>
+                <select class="form-select" id="role" name="role" required>
+                    <option value="user" selected>User</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan Username anda" required>
             </div>
@@ -80,15 +87,68 @@
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent form submission
 
+            const role = document.getElementById('role').value;
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            if (username === 'admin' && password === '123') {
-                window.location.href = '/admin'; // Redirect to payment page if admin
-            } else {
-                window.location.href = '/home'; // Redirect to home page if not admin
-            }
+            // Tentukan endpoint berdasarkan role
+            const endpoint = role === 'admin' 
+                ? '{{ url("/api/admin/login") }}' 
+                : '{{ url("/api/user/login") }}';
+
+            // Mengirim data login ke backend API
+            fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: username, password: password }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.token) {
+                    // Simpan token di localStorage atau sessionStorage
+                    localStorage.setItem('auth_token', data.token);
+
+                    // Fetch user or admin data after login
+                    fetchUserData(role, data.token);
+                } else {
+                    alert('Login gagal: ' + (data.message || 'Periksa kembali username dan password Anda.'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat menghubungi server. Coba lagi.');
+            });
         });
+
+        function fetchUserData(role, token) {
+            const endpoint = role === 'admin' 
+                ? '{{ url("/api/admin/data") }}' 
+                : '{{ url("/api/user/data") }}';
+
+            // Fetch data after successful login
+            fetch(endpoint, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('User/Admin Data:', data);
+                // Redirect after fetching user data
+                if (role === 'admin') {
+                    window.location.href = '/admin';
+                } else {
+                    window.location.href = '/home';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat mengambil data pengguna. Coba lagi.');
+            });
+        }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDeMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>

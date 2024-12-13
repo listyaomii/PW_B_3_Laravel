@@ -7,24 +7,52 @@ use App\Models\User;
 use App\Models\Penerbangan;
 use App\Models\Refund;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash; 
 
 class AdminController extends Controller
 {
+    public function register(Request $request)
+    {
+    // Validasi input dari request
+    $validatedData = $request->validate([
+        'nama_admin' => 'required|string|max:255',
+        'email_admin' => 'required|email|unique:admins,email_admin',
+        'password_admin' => 'required|string|min:8', // Tambahkan konfirmasi password
+    ]);
+
+    // Buat admin baru
+    $admin = Admin::create([
+        'nama_admin' => $validatedData['nama_admin'],
+        'email_admin' => $validatedData['email_admin'],
+        'password_admin' => bcrypt($validatedData['password_admin']), // Enkripsi password
+    ]);
+
+    // Buat token untuk admin
+    // $token = $admin->createToken('AdminApp')->plainTextToken;
+
+    // Kembalikan response
+    return response()->json([
+        'message' => 'Registrasi berhasil.',
+        'admin' => $admin,
+        // 'token' => $token,
+    ], 201);
+    }
+
     // Fungsi Login untuk Admin
     public function login(Request $request)
     {
         // Validasi data yang dikirimkan dalam request
         $validatedData = $request->validate([
-            'email_admin' => 'required|string|email',
+            'nama_admin' => 'required|string',
             'password_admin' => 'required|string',
         ]);
 
         // Cek kredensial (email dan password)
-        $admin = Admin::where('email_admin', $validatedData['email_admin'])->first();
+        $admin = Admin::where('nama_admin', $validatedData['nama_admin'])->first();
 
         if (!$admin || !Hash::check($validatedData['password_admin'], $admin->password_admin)) {
             return response()->json([
-                'message' => 'Email atau password salah.',
+                'message' => 'Username atau password salah.',
             ], 401);
         }
 
@@ -33,10 +61,11 @@ class AdminController extends Controller
 
         return response()->json([
             'message' => 'Login berhasil.',
-            'admin' => $admin,
+            // 'admin' => $admin,
             'token' => $token,
         ]);
     }
+
     // Display a listing of the admins
     public function index()
     {

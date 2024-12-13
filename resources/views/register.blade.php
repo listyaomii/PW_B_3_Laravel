@@ -59,45 +59,46 @@
     </nav>
     <div class="container register-container">
         <h2>Register</h2>
-        <form>
+        <form id="registerForm">
+            @csrf <!-- Token CSRF untuk keamanan -->
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="name" class="form-label">Nama</label>
-                    <input type="text" class="form-control" id="name" placeholder="Masukkan Nama anda" required>
+                    <input type="text" class="form-control" name="nama_user" id="name" placeholder="Masukkan Nama anda" required>
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label for="email" class="form-label">E-mail</label>
-                    <input type="email" class="form-control" id="email" placeholder="Masukkan E-mail anda" required>
+                    <input type="email" class="form-control" name="email_user" id="email" placeholder="Masukkan E-mail anda" required>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" placeholder="Masukkan Password anda" required>
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Masukkan Password anda" required>
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" placeholder="Masukkan username anda" required>
+                    <input type="text" class="form-control" name="username" id="username" placeholder="Masukkan username anda" required>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="address" class="form-label">Alamat</label>
-                    <input type="text" class="form-control" id="address" placeholder="Masukkan Alamat anda" required>
+                    <input type="text" class="form-control" name="alamat" id="address" placeholder="Masukkan Alamat anda" required>
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label for="phone" class="form-label">Nomor Telepon</label>
-                    <input type="text" class="form-control" id="phone" placeholder="Masukkan nomor telepon anda" required>
+                    <input type="text" class="form-control" name="telp_user" id="phone" placeholder="Masukkan nomor telepon anda" required>
                 </div>
             </div>
 
             <div class="d-grid gap-2">
-                <a href="{{url('/Login')}}" type="button submit" class="btn btn-primary">Register</a>
+                <button type="submit" class="btn btn-primary">Register</button>
             </div>
 
             <div class="form-text mt-3">
@@ -107,5 +108,34 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Menangani pengiriman form
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Mencegah form dikirim secara default
+
+            // Ambil data form
+            const formData = new FormData(this);
+            
+            // Kirim data ke API
+            fetch('{{ route("user.register") }}', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.redirect_to) {
+                    // Jika berhasil, redirect ke halaman login
+                    window.location.href = data.redirect_to;
+                } else {
+                    // Tampilkan pesan error jika ada
+                    alert('Terjadi kesalahan: ' + (data.message || 'Gagal mengirim data.'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan, silakan coba lagi.');
+            });
+        });
+    </script>
 </body>
 </html>

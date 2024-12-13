@@ -6,40 +6,41 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+
 class UserController extends Controller
 {
     // Fungsi Login
     public function login(Request $request)
     {
-        // Validasi data yang dikirimkan dalam request
+        // Validasi data yang diterima
         $validatedData = $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        // Cek kredensial (username dan password)
-        if (Auth::attempt(['username' => $validatedData['username'], 'password' => $validatedData['password']])) {
-            $user = Auth::user();
+        // Cari pengguna berdasarkan username
+        $user = User::where('username', $validatedData['username'])->first();
 
-            // Mengembalikan response dengan token jika login berhasil
-            $token = $user->createToken('YourAppName')->plainTextToken;
-
-            return response()->json([
-                'message' => 'Login berhasil.',
-                'user' => $user,
-                'token' => $token,
-            ]);
+        // Jika pengguna tidak ditemukan atau password salah
+        if (!$user || !Hash::check($validatedData['password'], $user->password)) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
-        // Jika login gagal
+        // Buat token autentikasi
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        // Berikan response jika login berhasil
         return response()->json([
-            'message' => 'Username atau password salah.',
-        ], 401);
+            'message' => 'Login successful',
+            'token' => $token,
+            'user' => $user,
+        ]);
     }
     
     // Membuat User Baru (Register)
     public function register(Request $request)
     {
+        // Validasi data yang diterima
         $validatedData = $request->validate([
             'password' => 'required|string',
             'username' => 'required|string|unique:users',
@@ -50,14 +51,20 @@ class UserController extends Controller
             'foto' => 'nullable|string',
         ]);
 
+        // Hash password
         $validatedData['password'] = Hash::make($validatedData['password']);
 
+        // Buat user baru
         $user = User::create($validatedData);
 
+        // Tidak perlu buat token disini
+
+        // Redirect ke halaman login setelah berhasil mendaftar
         return response()->json([
-            'message' => 'User berhasil didaftarkan.',
-            'user' => $user
-        ], 201);
+            'message' => 'Login successful',
+            'user' => $user,
+            'redirect_to' => '/login',
+        ]);
     }
 
     // Menampilkan Daftar User
@@ -67,7 +74,16 @@ class UserController extends Controller
         return response()->json($users);
     }
 
-    // Menampilkan Detail User Berdasarkan ID
+    // public function show(){
+    //     $user = Auth::user();
+
+    //     if(!$user){
+    //         return response()->json(['message' => 'Pengguna tidak ditemukan atau tidak terautentikasi'], 404);
+    //     }
+    //     return response()->json($user);
+    // }
+
+    //Menampilkan Detail User Berdasarkan ID
     public function show($id)
     {
         $user = User::find($id);
@@ -122,5 +138,10 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json(['message' => 'User berhasil dihapus.']);
+    }
+
+    public function showLoginPage()
+    {
+        return view('login'); // Ganti dengan nama view login Anda
     }
 }
