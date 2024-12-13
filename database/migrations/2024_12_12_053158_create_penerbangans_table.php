@@ -6,11 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 class CreatePenerbangansTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
+
     public function up()
     {
         Schema::create('penerbangans', function (Blueprint $table) {
@@ -31,11 +27,7 @@ class CreatePenerbangansTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
+
     public function down()
     {
         Schema::dropIfExists('penerbangans');
