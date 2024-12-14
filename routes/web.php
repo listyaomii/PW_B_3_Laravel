@@ -7,17 +7,19 @@ Route::get('/home', function () {
     return view('home');
 })->name('home'); 
 
-Route::get('/login', [UserController::class, 'loginForm'])->name('user.loginForm'); // Corrected route
+Route::get('/login', [UserController::class, 'loginForm'])->name('login');
 
 Route::get('/', function () {
     return view('Login');
 })->name('login'); // Optional if you want the homepage to also use the login page
 
 // Define the register route
+Route::resource('/user', UserController::class);
 Route::get('/register', [UserController::class, 'registerForm'])->name('user.register');
-
 Route::post('/login', [UserController::class, 'login'])->name('user.login');  // Corrected route
 Route::post('/register', [UserController::class, 'register'])->name('user.register.post');
+
+Route::get('/profile', [UserController::class, 'showProfile'])->name('profile');
 
 Route::get('/pesanan', function () {
     return view('pesanan');

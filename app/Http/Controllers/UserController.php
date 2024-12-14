@@ -22,17 +22,18 @@ class UserController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = User::where('username', $validatedData['username'])->first();
+        $user = User::where('username', $request->username)->first();
 
-        if (!$user || !Hash::check($validatedData['password'], $user->password)) {
-            return redirect()->back()->withErrors(['message' => 'Invalid credentials']);
+        if ($user && Hash::check($request->password, $user->password)) {
+            session([
+                'id_user' => $user->id_user,
+                'nama_user' => $user->nama_user
+            ]);
+            return redirect()->route('home')->with('message', 'Login successful');
+        }else{
+            return back()->withErrors(['message' => 'Invalid credentials']);
         }
 
-        // Simpan sesi pengguna
-        session(['user' => $user]);
-
-           // Redirect to the home page after successful login
-        return redirect()->route('home')->with('message', 'Login successful');
     }
 
     public function registerForm()
@@ -57,14 +58,14 @@ class UserController extends Controller
 
         User::create($validatedData);
 
-        return redirect()->route('users.loginForm')->with('message', 'User berhasil didaftarkan.');
+        return redirect()->route('login')->with('message', 'Registrasi berhasil! Silakan login.');
     }
 
     // Menampilkan daftar user
     public function index()
     {
-        $users = User::all();
-        return view('users.index', compact('users'));
+        $user = User::all();
+        return view('user.index', compact('user'));
     }
 
     // Menampilkan detail user
@@ -73,10 +74,10 @@ class UserController extends Controller
         $user = User::find($id);
 
         if (!$user) {
-            return redirect()->route('users.index')->withErrors(['message' => 'User tidak ditemukan.']);
+            return redirect()->route('user.index')->withErrors(['message' => 'User tidak ditemukan.']);
         }
 
-        return view('users.show', compact('user'));
+        return view('user.show', compact('user'));
     }
 
     // Halaman edit user
@@ -85,10 +86,10 @@ class UserController extends Controller
         $user = User::find($id);
 
         if (!$user) {
-            return redirect()->route('users.index')->withErrors(['message' => 'User tidak ditemukan.']);
+            return redirect()->route('user.index')->withErrors(['message' => 'User tidak ditemukan.']);
         }
 
-        return view('users.edit', compact('user'));
+        return view('user.edit', compact('user'));
     }
 
     // Proses update user
@@ -132,4 +133,26 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('message', 'User berhasil dihapus.');
     }
+
+    public function showProfile()
+    {
+        // Ambil user dari sesi
+        if(session()->has('id_user')){
+            $user = User::find(session('id_user'));
+
+            if($user){
+                return view('profile', compact('user'));
+            }else{
+                return redirect()->route('login')->with('error', 'User tidak ditemukan');
+            }
+        }else{
+            return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu');
+        }
+    }
+
+    public function logout(){
+        session()->foreget(['id_user', 'nama_user']);
+        return redirect()->route('login');
+    }
+
 }

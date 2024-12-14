@@ -132,15 +132,16 @@
         <div class="container-lg">
             <h2 class="text-center">Profile</h2>
             <img src="imgs/jay.jpeg" alt="Profile Picture" class="img-fluid">
-
-            <h3 class="profile-title">Jay Jung</h3>
-            <ul class="profile-details">
-                <li><span>Nomor Telepon:</span> 081234567898</li>
-                <li><span>Email:</span> peach@gmail.com</li>
-                <li><span>Tanggal Lahir :</span> 14 Februari 1997</li>
-                <!-- <li><span>Alamat:</span> Jalan Peach no 81A</li> -->
-            </ul>
-
+            @if(isset($user))
+                <h3 class="profile-title">{{$user->nama_user}}</h3>
+                <ul class="profile-details">
+                    <li><span>Nomor Telepon:</span> {{ $user->telp_user }}</li>
+                    <li><span>Email:</span> {{ $user->email_user }}</li>
+                    <li><span>Alamat:</span> {{ $user->alamat }}</li>
+                </ul>
+            @else
+            <h1>Pengguna tidak ditemukan</h1>
+            @endif
             <!-- Tombol Logout dengan modal -->
             <div class="d-flex justify-content-center">
                 <button type="button" class="btn btn-outline-danger" style="margin-top: 20px;" data-bs-toggle="modal" data-bs-target="#logoutModal">
@@ -223,7 +224,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <a href="{{url('/Login')}}" type="button" class="btn btn-danger">Logout</a>
+                    <a href="{{ route('login') }}" type="button" class="btn btn-danger">Logout</a>
                 </div>
             </div>
         </div>
@@ -242,7 +243,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <a href="{{url('/Login')}}" type="button" class="btn btn-danger">Delete Account</a>
+                    <a href="{{ route('login') }}" type="button" class="btn btn-danger">Delete Account</a>
                 </div>
             </div>
         </div>

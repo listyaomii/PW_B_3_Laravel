@@ -33,7 +33,6 @@
         .custom-navbar .navbar-nav .nav-link {
             color: black; /* Mengubah warna teks */
             font-weight: 100;
-            
         }
 
         .navbar {
