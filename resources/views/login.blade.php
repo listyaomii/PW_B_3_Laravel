@@ -60,20 +60,23 @@
 
     <div class="login-container">
         <h2>Log in</h2>
-        <form id="loginForm">
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan Username anda" required>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan Password anda" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 mb-2">Login</button>
-            <div class="form-text">
-                Belum punya akun? <a href="{{url('/Register')}}" class="btn btn-secondary btn-block">Daftar</a>
-            </div>
-        </form>
+        <form action="{{ route('user.login') }}" method="POST">
+        @csrf
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan Username anda" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan Password anda" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 mb-2">Login</button>
+        <div class="form-text">
+            Belum punya akun? <a href="{{ route('user.register') }}" class="btn btn-secondary btn-block">Daftar</a>
+
+        </div>
+</form>
+
     </div>
 
     <script>

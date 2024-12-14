@@ -11,14 +11,14 @@ class RefundController extends Controller
     // Fungsi untuk menampilkan semua refund
     public function index()
     {
-        $refunds = Refund::with('pemesanan', 'admin')->get();
+        $refunds = Refund::with('pemesanan')->get();
         return response()->json($refunds);
     }
 
     // Fungsi untuk menampilkan satu refund berdasarkan ID
     public function show($id)
     {
-        $refund = Refund::with('pemesanan', 'admin')->find($id);
+        $refund = Refund::with('pemesanan')->find($id);
 
         if (!$refund) {
             return response()->json(['message' => 'Refund tidak ditemukan'], 404);
@@ -34,6 +34,7 @@ class RefundController extends Controller
             'id_pemesanan' => 'required|exists:pemesanans,id_pemesanan',
             'Total_refund' => 'required|numeric|min:0',
             'no_rekening' => 'required|string',
+        
         ]);
 
         $refund = Refund::create($request->all());

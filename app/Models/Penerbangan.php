@@ -13,13 +13,14 @@ class Penerbangan extends Model
 
     protected $fillable = [
         'bandara_asal',
-        'bandara_tujuan',
+        // 'bandara_tujuan',
         'tanggal',
         'maskapai',
         'waktu_keberangkatan',
         'waktu_kedatangan',
         'durasi',
         'kode_penerbangan',
+      
     ];
 
     public function tiket(){
@@ -28,6 +29,6 @@ class Penerbangan extends Model
 
     public function admin()
     {
-        return $this->belongsTo(Admin::class, 'id_admin', 'id_admin');
+        return $this->belongsTo(Admin::class, 'id_admin');
     }
 }

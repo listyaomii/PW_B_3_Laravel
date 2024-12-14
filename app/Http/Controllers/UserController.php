@@ -6,38 +6,41 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-
 class UserController extends Controller
 {
-    // Fungsi Login
+    // Halaman login
+    public function loginForm()
+    {
+        return view('login');
+    }
+
+    // Proses login
     public function login(Request $request)
     {
-        // Validasi data yang diterima
         $validatedData = $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        // Cari pengguna berdasarkan username
         $user = User::where('username', $validatedData['username'])->first();
 
-        // Jika pengguna tidak ditemukan atau password salah
         if (!$user || !Hash::check($validatedData['password'], $user->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+            return redirect()->back()->withErrors(['message' => 'Invalid credentials']);
         }
 
-        // Buat token autentikasi
-        $token = $user->createToken('auth_token')->plainTextToken;
+        // Simpan sesi pengguna
+        session(['user' => $user]);
 
-        // Berikan response jika login berhasil
-        return response()->json([
-            'message' => 'Login successful',
-            'token' => $token,
-            'user' => $user,
-        ]);
+           // Redirect to the home page after successful login
+        return redirect()->route('home')->with('message', 'Login successful');
     }
-    
-    // Membuat User Baru (Register)
+
+    public function registerForm()
+    {
+        return view('register'); 
+    }
+
+    // Proses registrasi
     public function register(Request $request)
     {
         $validatedData = $request->validate([
@@ -52,40 +55,49 @@ class UserController extends Controller
 
         $validatedData['password'] = Hash::make($validatedData['password']);
 
-        $user = User::create($validatedData);
+        User::create($validatedData);
 
-        return response()->json([
-            'message' => 'User berhasil didaftarkan.',
-            'user' => $user
-        ], 201);
+        return redirect()->route('users.loginForm')->with('message', 'User berhasil didaftarkan.');
     }
 
-    // Menampilkan Daftar User
+    // Menampilkan daftar user
     public function index()
     {
         $users = User::all();
-        return response()->json($users);
+        return view('users.index', compact('users'));
     }
 
-    // Menampilkan Detail User Berdasarkan ID
+    // Menampilkan detail user
     public function show($id)
     {
         $user = User::find($id);
 
         if (!$user) {
-            return response()->json(['message' => 'User tidak ditemukan.'], 404);
+            return redirect()->route('users.index')->withErrors(['message' => 'User tidak ditemukan.']);
         }
 
-        return response()->json($user);
+        return view('users.show', compact('user'));
     }
 
-    // Memperbarui Data User
+    // Halaman edit user
+    public function edit($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return redirect()->route('users.index')->withErrors(['message' => 'User tidak ditemukan.']);
+        }
+
+        return view('users.edit', compact('user'));
+    }
+
+    // Proses update user
     public function update(Request $request, $id)
     {
         $user = User::find($id);
 
         if (!$user) {
-            return response()->json(['message' => 'User tidak ditemukan.'], 404);
+            return redirect()->route('users.index')->withErrors(['message' => 'User tidak ditemukan.']);
         }
 
         $validatedData = $request->validate([
@@ -104,23 +116,20 @@ class UserController extends Controller
 
         $user->update($validatedData);
 
-        return response()->json([
-            'message' => 'User berhasil diperbarui.',
-            'user' => $user
-        ]);
+        return redirect()->route('users.index')->with('message', 'User berhasil diperbarui.');
     }
 
-    // Menghapus User
+    // Menghapus user
     public function destroy($id)
     {
         $user = User::find($id);
 
         if (!$user) {
-            return response()->json(['message' => 'User tidak ditemukan.'], 404);
+            return redirect()->route('users.index')->withErrors(['message' => 'User tidak ditemukan.']);
         }
 
         $user->delete();
 
-        return response()->json(['message' => 'User berhasil dihapus.']);
+        return redirect()->route('users.index')->with('message', 'User berhasil dihapus.');
     }
 }

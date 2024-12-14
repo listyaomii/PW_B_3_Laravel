@@ -12,7 +12,7 @@ class CreatePenumpangsTable extends Migration
         Schema::create('penumpangs', function (Blueprint $table) {
             $table->id('id_penumpang'); // Primary key
             $table->string('nama_lengkap'); // Nama lengkap penumpang
-            $table->string('bandara_tujuan'); // Bandara tujuan penumpang
+            // $table->string('bandara_tujuan'); // Bandara tujuan penumpang
             $table->string('title_penumpang'); // Title (e.g., Mr, Mrs, Ms)
             $table->string('no_identitas')->unique(); // Nomor identitas unik
             $table->string('no_telp'); // Nomor telepon penumpang

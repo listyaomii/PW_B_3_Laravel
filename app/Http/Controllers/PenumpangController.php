@@ -31,7 +31,7 @@ class PenumpangController extends Controller
     {
         $validatedData = $request->validate([
             'nama_lengkap' => 'required|string',
-            'bandara_tujuan' => 'required|string',
+            // 'bandara_tujuan' => 'required|string',
             'title_penumpang' => 'required|string',
             'no_identitas' => 'required|string|unique:penumpangs',
             'no_telp' => 'required|string|digits_between:10,13',

@@ -18,12 +18,12 @@ class CreatePenerbangansTable extends Migration
             $table->time('waktu_keberangkatan'); // Waktu keberangkatan
             $table->time('waktu_kedatangan'); // Waktu kedatangan
             $table->string('durasi'); // Durasi penerbangan
-            $table->unsignedBigInteger('id_admin'); // Foreign key ke tabel admins
+            // $table->unsignedBigInteger('id_admin'); // Foreign key ke tabel admins
             $table->string('kode_penerbangan');
             $table->timestamps(); // Kolom created_at dan updated_at
 
             // Definisi foreign key
-            $table->foreign('id_admin')->references('id_admin')->on('admins')->onDelete('cascade');
+            // $table->foreign('id_admin')->references('id_admin')->on('admins')->onDelete('cascade');
         });
     }
 

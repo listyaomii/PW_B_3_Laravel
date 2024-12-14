@@ -15,6 +15,7 @@ class Refund extends Model
         'id_pemesanan',
         'Total_refund',
         'no_rekening',
+    
     ];
 
     public function pemesanan(){
@@ -24,6 +25,6 @@ class Refund extends Model
     // Relasi baru ke model Admin
     public function admin()
     {
-        return $this->belongsTo(Admin::class, 'id_admin', 'id_admin');
+        return $this->belongsTo(Admin::class, 'id_admin');
     }
 }

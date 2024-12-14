@@ -1,22 +1,23 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 
 Route::get('/home', function () {
     return view('home');
-});
+})->name('home'); 
 
-Route::get('/Login', function(){
-    return view('Login');
-});
+Route::get('/login', [UserController::class, 'loginForm'])->name('user.loginForm'); // Corrected route
 
 Route::get('/', function () {
     return view('Login');
-})->name('/');
+})->name('login'); // Optional if you want the homepage to also use the login page
 
-Route::get('/Register', function () {
-    return view('Register');
-})->name('register');
+// Define the register route
+Route::get('/register', [UserController::class, 'registerForm'])->name('user.register');
+
+Route::post('/login', [UserController::class, 'login'])->name('user.login');  // Corrected route
+Route::post('/register', [UserController::class, 'register'])->name('user.register.post');
 
 Route::get('/pesanan', function () {
     return view('pesanan');

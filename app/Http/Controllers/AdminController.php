@@ -3,74 +3,66 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
-use App\Models\User;
-use App\Models\Penerbangan;
-use App\Models\Refund;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash; 
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
-    public function register(Request $request)
+    // Show the registration form for admin
+    public function registerForm()
     {
-    // Validasi input dari request
-    $validatedData = $request->validate([
-        'nama_admin' => 'required|string|max:255',
-        'email_admin' => 'required|email|unique:admins,email_admin',
-        'password_admin' => 'required|string|min:8', // Tambahkan konfirmasi password
-    ]);
-
-    // Buat admin baru
-    $admin = Admin::create([
-        'nama_admin' => $validatedData['nama_admin'],
-        'email_admin' => $validatedData['email_admin'],
-        'password_admin' => bcrypt($validatedData['password_admin']), // Enkripsi password
-    ]);
-
-    // Buat token untuk admin
-    $token = $admin->createToken('AdminApp')->plainTextToken;
-
-    // Kembalikan response
-    return response()->json([
-        'message' => 'Registrasi berhasil.',
-        'admin' => $admin,
-        'token' => $token,
-    ], 201);
+        return view('admin.register');
     }
 
-    // Fungsi Login untuk Admin
+    // Register a new admin
+    public function register(Request $request)
+    {
+        $validatedData = $request->validate([
+            'nama_admin' => 'required|string|max:255',
+            'email_admin' => 'required|email|unique:admins,email_admin',
+            'password_admin' => 'required|string|min:8',
+        ]);
+
+        $admin = Admin::create([
+            'nama_admin' => $validatedData['nama_admin'],
+            'email_admin' => $validatedData['email_admin'],
+            'password_admin' => bcrypt($validatedData['password_admin']),
+        ]);
+
+        return redirect()->route('admin.loginForm')->with('message', 'Registration successful.');
+    }
+
+    // Show the login form for admin
+    public function loginForm()
+    {
+        return view('admin.login');
+    }
+
+    // Handle login for admin
     public function login(Request $request)
     {
-        // Validasi data yang dikirimkan dalam request
         $validatedData = $request->validate([
             'email_admin' => 'required|string|email',
             'password_admin' => 'required|string',
         ]);
 
-        // Cek kredensial (email dan password)
         $admin = Admin::where('email_admin', $validatedData['email_admin'])->first();
 
         if (!$admin || !Hash::check($validatedData['password_admin'], $admin->password_admin)) {
-            return response()->json([
-                'message' => 'Email atau password salah.',
-            ], 401);
+            return redirect()->back()->withErrors(['message' => 'Invalid email or password.']);
         }
 
-        // Menghasilkan token jika login berhasil
-        $token = $admin->createToken('AdminApp')->plainTextToken;
+        // Optionally, you can use session to store admin login
+        session(['admin' => $admin]);
 
-        return response()->json([
-            'message' => 'Login berhasil.',
-            'admin' => $admin,
-            'token' => $token,
-        ]);
+        return redirect()->route('admin.dashboard')->with('message', 'Login successful.');
     }
 
     // Display a listing of the admins
     public function index()
     {
         $admins = Admin::all();
-        return response()->json($admins);
+        return view('admin.index', compact('admins'));
     }
 
     // Show the form for creating a new admin
@@ -94,14 +86,14 @@ class AdminController extends Controller
             'password_admin' => bcrypt($request->password_admin),
         ]);
 
-        return response()->json($admin, 201);
+        return redirect()->route('admin.index')->with('message', 'Admin created successfully.');
     }
 
     // Display the specified admin
     public function show($id)
     {
         $admin = Admin::findOrFail($id);
-        return response()->json($admin);
+        return view('admin.show', compact('admin'));
     }
 
     // Show the form for editing the specified admin
@@ -123,14 +115,14 @@ class AdminController extends Controller
         $admin = Admin::findOrFail($id);
         $admin->nama_admin = $request->nama_admin;
         $admin->email_admin = $request->email_admin;
-        
+
         if ($request->filled('password_admin')) {
             $admin->password_admin = bcrypt($request->password_admin);
         }
 
         $admin->save();
 
-        return response()->json($admin);
+        return redirect()->route('admin.index')->with('message', 'Admin updated successfully.');
     }
 
     // Remove the specified admin from storage
@@ -139,30 +131,13 @@ class AdminController extends Controller
         $admin = Admin::findOrFail($id);
         $admin->delete();
 
-        return response()->json(['message' => 'Admin deleted successfully']);
+        return redirect()->route('admin.index')->with('message', 'Admin deleted successfully.');
     }
 
-    // Get all users for a specific admin
-    public function users($id)
+    // Optionally show a dashboard page for the admin
+    public function dashboard()
     {
-        $admin = Admin::findOrFail($id);
-        $users = $admin->users;
-        return response()->json($users);
-    }
-
-    // Get all penerbangan for a specific admin
-    public function penerbangan($id)
-    {
-        $admin = Admin::findOrFail($id);
-        $penerbangan = $admin->penerbangan;
-        return response()->json($penerbangan);
-    }
-
-    // Get all refunds through users for a specific admin
-    public function refunds($id)
-    {
-        $admin = Admin::findOrFail($id);
-        $refunds = $admin->refunds;
-        return response()->json($refunds);
+        return view('admin.dashboard');
     }
 }
+

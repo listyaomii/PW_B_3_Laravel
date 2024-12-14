@@ -10,7 +10,7 @@ class PenerbanganController extends Controller
     // Menampilkan semua penerbangan
     public function index()
     {
-        $penerbangans = Penerbangan::with('tiket', 'admin')->get();
+        $penerbangans = Penerbangan::with('tiket')->get();
         return response()->json($penerbangans);
     }
 
@@ -37,6 +37,8 @@ class PenerbanganController extends Controller
             'waktu_keberangkatan' => 'required|date_format:H:i',
             'waktu_kedatangan' => 'required|date_format:H:i',
             'durasi' => 'required|string',
+            'kode_penerbangan' => 'required|string',
+   
         ]);
 
         $penerbangan = Penerbangan::create($validatedData);
