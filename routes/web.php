@@ -44,8 +44,6 @@ Route::get('/tiket', [TiketController::class, 'showSearchForm'])->name('tiket.fo
 Route::get('/tiket/search', [TiketController::class, 'search'])->name('tiket.search');
 Route::get('/tiketView', [TiketController::class, 'index'])->name('tiketView');
 
-
-
 Route::get('/profile', function () {
     return view('profile');
 });

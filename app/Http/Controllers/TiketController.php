@@ -2,65 +2,100 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Tiket;
-use App\Models\Penerbangan;
+use App\Models\Penerbangan; // Tambahkan namespace model
+use App\Models\Tiket; // Tambahkan jika Tiket juga digunakan
 use Illuminate\Http\Request;
 
 class TiketController extends Controller
 {
     public function search(Request $request)
     {
-        // Validasi input
-        $request->validate([
-            'from' => 'required|string',
-            'to' => 'required|string',
-            'class' => 'required|string',
-            'date' => 'required|date',
-        ]);
+        // Ambil input pencarian dari form
+        $bandaraAsal = $request->input('bandara_asal');
+        $bandaraTujuan = $request->input('bandara_tujuan');
+        $kelas = $request->input('kelas');
     
-        // Ambil data dari form
-        $from = $request->input('from');
-        $to = $request->input('to');
-        $class = $request->input('class');
-        $date = $request->input('date');
-    
-        // Lakukan pencarian tiket berdasarkan filter
-        $tikets = Tiket::whereHas('penerbangan', function ($query) use ($from, $to, $date) {
-            $query->where('bandara_asal', $from)
-                  ->where('bandara_tujuan', $to)
-                  ->whereDate('tanggal', $date);
-        })
-        ->where('kelas', $class)
-        ->get();
-    
-        // Jika tidak ada tiket ditemukan
-        if ($tikets->isEmpty()) {
-            return view('tiket', [
-                'tikets' => Tiket::with('penerbangan')->get(), // Tetap kirimkan semua tiket untuk dropdown
-                'message' => 'Tidak ada tiket yang ditemukan.'
-            ]);
+        // Periksa apakah input pencarian kosong
+        if (is_null($bandaraAsal) && is_null($bandaraTujuan) && is_null($kelas)) {
+            return redirect()->route('tiket.form')->with('error', 'Silakan pilih bandara asal, tujuan, dan kelas.');
         }
     
-        // Kirim data tiket ke view
-        return view('tiket', ['tikets' => $tikets]);
+        // Simpan input pencarian dalam session
+        $request->session()->put('bandara_asal', $bandaraAsal);
+        $request->session()->put('bandara_tujuan', $bandaraTujuan);
+        $request->session()->put('kelas', $kelas);
+    
+        // Query tiket dengan eager load untuk relasi penerbangan
+        $tiket = Tiket::with('penerbangan');
+    
+        // Filter berdasarkan input pencarian
+        if ($bandaraAsal) {
+            $tiket = $tiket->whereHas('penerbangan', function ($query) use ($bandaraAsal) {
+                $query->where('bandara_asal', $bandaraAsal);
+            });
+        }
+    
+        if ($bandaraTujuan) {
+            $tiket = $tiket->whereHas('penerbangan', function ($query) use ($bandaraTujuan) {
+                $query->where('bandara_tujuan', $bandaraTujuan);
+            });
+        }
+    
+        if ($kelas) {
+            $tiket = $tiket->where('kelas', $kelas);
+        }
+    
+        // Ambil data tiket
+        $tiket = $tiket->get();
+    
+        // Ambil data bandara asal, tujuan, dan kelas untuk ditampilkan di form
+        $bandaraAsalList = Penerbangan::distinct()->pluck('bandara_asal');
+        $bandaraTujuanList = Penerbangan::distinct()->pluck('bandara_tujuan');
+        $kelasList = Tiket::select('kelas')->distinct()->pluck('kelas');
+    
+        // Mengirimkan data ke view
+        return view('tiketView', compact('tiket', 'bandaraAsalList', 'bandaraTujuanList', 'kelasList'));
     }
+    
+    
 
     public function showSearchForm()
     {
-        $bandaraAsal = Tiket::with('penerbangan')->get()->pluck('penerbangan.bandara_asal')->unique();
-        $bandaraTujuan = Tiket::with('penerbangan')->get()->pluck('penerbangan.bandara_tujuan')->unique();
-        $kelas = Tiket::select('kelas')->distinct()->pluck('kelas');
-
-        return view('tiket', compact('bandaraAsal', 'bandaraTujuan', 'kelas'));
-    }
-
+        // Ambil daftar bandara asal dan tujuan dari tabel penerbangan
+        $bandaraAsalList = Penerbangan::select('bandara_asal')->distinct()->pluck('bandara_asal');
+        $bandaraTujuanList = Penerbangan::select('bandara_tujuan')->distinct()->pluck('bandara_tujuan');
+        $kelasList = ['Ekonomi', 'Bisnis'];
     
-
-    public function index()
+        // Kirim data ke view
+        return view('tiket', compact('bandaraAsalList', 'bandaraTujuanList', 'kelasList'));
+    }
+    
+    public function index(Request $request)
     {
-        $tiketList = Tiket::all(); // Ambil semua tiket atau data sesuai kebutuhan
+        // Contoh filter pencarian tiket berdasarkan asal dan tujuan
+        $query = Tiket::with('penerbangan'); // Eager load the 'penerbangan' relationship
+        
+        // Menambahkan kondisi filter jika ada
+        if ($request->has('asal')) {
+            $query->whereHas('penerbangan', function($query) use ($request) {
+                $query->where('bandara_asal', $request->input('asal'));
+            });
+        }
+        if ($request->has('tujuan')) {
+            $query->whereHas('penerbangan', function($query) use ($request) {
+                $query->where('bandara_tujuan', $request->input('tujuan'));
+            });
+        }
+        if ($request->has('tanggal')) {
+            $query->whereDate('waktu_keberangkatan', $request->input('tanggal'));
+        }
+    
+        $tiketList = $query->get(); // Fetch the data with the 'penerbangan' relationship loaded
+        
         return view('tiketView', compact('tiketList'));
     }
+    
+    
 
     public function create()
     {

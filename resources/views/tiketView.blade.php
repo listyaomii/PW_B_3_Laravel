@@ -20,30 +20,34 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap; /* Agar konten tidak tumpang tindih di layar yang lebih kecil */
+            flex-wrap: wrap;
+            padding: 10px;
         }
 
         .card-body div {
-            margin: 10px 0;
+            margin: 5px 0;
         }
 
         .card-body h2, .card-body strong, .card-body span {
             margin-right: 10px;
+            font-size: 1.2rem;
         }
 
         .card {
-            width: 100%; /* Pastikan card memiliki lebar 100% */
-            max-width: 100%; /* Membatasi lebar maksimum */
+            width: 100%;
+            max-width: 70%;
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 10px auto;
+            border-radius: 20px;
+            height: 300px;
         }
 
-
-        img{
+        img {
             border-radius: 50%;
             border: solid 1px #D3D3D3;
             width: 40px;
-            height:40px;
+            height: 40px;
         }
 
         .input-group {
@@ -56,7 +60,7 @@
             background-color: #f0f4ff;
             border: none;
             padding: 10px 20px;
-            font-size: 16px;
+            font-size: 14px;
             color: #333;
         }
 
@@ -96,21 +100,21 @@
 
         body {
             font-family: 'Alegreya', serif;
-            font-size: 20px;
+            font-size: 16px;
         }
 
         .content {
-            margin-top: 100px; 
+            margin-top: 100px;
         }
 
         .btn-container {
             display: flex;
             align-items: center;
-            margin-left: 20px; 
+            margin-left: 20px;
         }
 
         .d-flex {
-            flex-wrap: wrap; /* Agar elemen di dalamnya dapat beralih ke baris berikutnya jika diperlukan */
+            flex-wrap: wrap;
         }
 
         .mb-0 {
@@ -119,94 +123,92 @@
 
         .divider {
             height: 2px;
-            width:100px;
+            width: 50%;
             background-color: #D3D3D3;
-            margin: 10px 0;
+            margin: 10px auto;
         }
 
-    @media (max-width: 768px) {
-    .input-group {
-        width: 100% !important;
-    }
+        @media (max-width: 768px) {
+            .input-group {
+                width: 100% !important;
+            }
 
-    .card {
-        width: 100%;
-        padding: 15px; /* Mengurangi padding pada layar kecil */
-    }
+            .card {
+                width: 100%;
+                padding: 15px;
+            }
 
-    .card-body h2, .card-body strong, .card-body span {
-        font-size: 1rem; /* Ukuran teks lebih kecil */
-    }
+            .card-body h2, .card-body strong, .card-body span {
+                font-size: 0.9rem;
+            }
 
-    img {
-        width: 30px;
-        height: 30px; /* Membuat gambar logo lebih kecil */
-    }
+            img {
+                width: 30px;
+                height: 30px;
+            }
 
-    .d-flex {
-        flex-wrap: wrap; /* Membuat flex-wrap pada elemen dengan kelas .d-flex */
-    }
+            .d-flex {
+                flex-wrap: wrap;
+            }
 
-    .card-body div {
-        flex: 1 1 100%; /* Setiap div akan menggunakan lebar 100% pada layar kecil */
-    }
+            .card-body div {
+                flex: 1 1 100%;
+            }
 
-    .btn-container {
-        margin-left: 0;
-    }
-}
+            .btn-container {
+                margin-left: 0;
+            }
+        }
 
-@media (max-width: 576px) {
-    .input-group {
-        width: 100% !important;
-        font-size: 0.9rem;
-    }
+        @media (max-width: 576px) {
+            .input-group {
+                width: 100% !important;
+                font-size: 0.8rem;
+            }
 
-    .card {
-        padding: 10px; /* Sesuaikan padding untuk layar kecil */
-    }
+            .card {
+                padding: 10px;
+            }
 
-    .card-body h2, .card-body strong, .card-body span {
-        font-size: 0.9rem; /* Ukuran teks lebih kecil */
-    }
+            .card-body h2, .card-body strong, .card-body span {
+                font-size: 0.8rem;
+            }
 
-    .d-flex {
-        flex-wrap: wrap;
-    }
+            .d-flex {
+                flex-wrap: wrap;
+            }
 
-    .card-body div {
-        flex: 1 1 100%; /* Setiap div akan menggunakan lebar 100% pada layar sangat kecil */
-    }
+            .card-body div {
+                flex: 1 1 100%;
+            }
 
-    img {
-        width: 25px;
-        height: 25px;
-    }
-}
-
+            img {
+                width: 25px;
+                height: 25px;
+            }
+        }
 
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg fixed-top">
-      <div class="container-fluid">
-          <a class="navbar-brand" href="#">
-              <i class="fas fa-plane-departure me-2"></i> Atma Ticket
-          </a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-              <div class="navbar-nav ms-auto">
-                  <a class="nav-link" href="{{url('/home')}}">Home</a>
-                  <a class="nav-link active" aria-current="page" href="{{ url('/tiket') }}">Tiket</a>
-                  <a class="nav-link" href="{{url('/pesanan')}}">Pesanan</a>
-                  <a class="nav-link" href="{{url('/refund')}}">Refund</a>
-                  <!-- <a class="nav-link" href="#">Login</a> -->
-                  <a class="nav-link" href="{{url('/profile')}}"><i class="bi bi-person-fill"></i></a>
-              </div>
-          </div>
-      </div>
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-plane-departure me-2"></i> Atma Ticket
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="{{url('/home')}}">Home</a>
+                    <a class="nav-link active" aria-current="page" href="{{ url('/tiket') }}">Tiket</a>
+                    <a class="nav-link" href="{{url('/pesanan')}}">Pesanan</a>
+                    <a class="nav-link" href="{{url('/refund')}}">Refund</a>
+                    <a class="nav-link" href="{{url('/profile')}}"><i class="bi bi-person-fill"></i></a>
+                </div>
+            </div>
+        </div>
     </nav>
 
     <div class="container d-flex mt-5 justify-content-center">
@@ -238,9 +240,7 @@
                 |
             </span>
             <span class="input-group-text rounded-end-pill">
-                <!-- <span style="margin-left: 25px; text-align: end;"> -->
-                    Ekonomi
-                <!-- </span> -->
+                Ekonomi
             </span>
         </div>
         <div class="btn-container mt-5 ms-5">
@@ -249,42 +249,46 @@
     </div>
 
     @forelse($tiketList as $item)
-        <div class="container d-flex justify-content-center align-items-center" style="min-height: 40vh;">
-        <div class="card mt-5" style="box-shadow:0 0 10px rgba(0, 0, 0, 0.1); border-radius:40px; width:fit-content;">
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 40vh;">
+        <div class="card mt-5" style="box-shadow:0 0 10px rgba(0, 0, 0, 0.1); border-radius:20px; width:100%; max-width: 1000px;">
             <div class="card-body justify-content-center">
-                <div class="d-flex justify-content-between align-items-center"> 
-                    <div class="d-flex align-items-center"> 
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
                         <img src="imgs/transNusa.jpeg" alt="logo transNusa" style="margin-right:10px;">
-                        <strong><?php echo $item['maskapai']?></strong>
+                        <strong class="mt-2">{{ $item->penerbangan->maskapai }}</strong>
                         <i class="ms-2 fas fa-suitcase"></i>
                     </div>
-                    <div class="d-flex align-items-center mx-5">
-                        <div class="mb-0 me-3">
-                            <h2><?php echo $item['jamBerangkat']?></h2>
-                            <p><?php echo $item['berangkat']?></p>
+
+                    <div class="d-flex flex-column text-center mx-5">
+                        <div>
+                            <h2>{{ $item->penerbangan->waktu_keberangkatan }}</h2>
+                            <p>{{ $item->penerbangan->bandara_asal }}</p>
                         </div>
                         <div class="mb-0 ms-3 me-3">
-                            <p><?php echo $item['durasi']?></p>
+                            <p>{{ $item->penerbangan->durasi }}</p>
                             <p class="divider"></p>
-                            <p><?php echo $item['tipe']?></p>
+                            <p>{{ $item->penerbangan->kode_penerbangan }}</p>
                         </div>
-                        <div class="mb-0 ms-3">
-                            <h2><?php echo $item['jamTiba']?></h2>
-                            <p><?php echo $item['tujuan']?></p>
+                        <div class="mb-0 ms-3 me-3">
+                            <h2>{{ $item->penerbangan->waktu_kedatangan }}</h2>
+                            <p>{{ $item->penerbangan->bandara_tujuan }}</p>
                         </div>
                     </div>
-                    <div class="d-flex align-items-center justify-content-end"> <!-- Harga -->
-                        <h2 class="mb-0">IDR <?php echo $item['harga']?></h2>
+
+                    <div class="d-flex align-items-center justify-content-end">
+                        <h2 class="price">IDR {{ number_format($item->harga, 0, ',', '.') }}</h2>
                     </div>
                 </div>
-                <div class="d-flex justify-content-end align-items-end mt-auto ms-5">
-                    <a href="{{ url('/tiketDetail')}}" class="btn btn-success" style="width:100px;">Pilih</a>
+
+                <div class="d-flex justify-content-end mt-3">
+                    <a href="{{ url('/tiketDetail/'.$item->id_penerbangan) }}" class="btn btn-success">Pilih</a>
                 </div>
             </div>
         </div>
-        </div>
-        @empty
-        @endforelse
+    </div>
+    @empty
+        <p>No tickets available</p>
+    @endforelse
 
     <script>
         const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
@@ -302,6 +306,3 @@
     </script>
 </body>
 </html>
-
-
-

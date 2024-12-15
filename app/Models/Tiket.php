@@ -16,10 +16,12 @@ class Tiket extends Model
         'harga',
         'id_penerbangan',
     ];
-
-    public function penerbangan(){
-        return $this->belongsTo(Penerbangan::class, 'id_penerbangan');
+    
+    public function penerbangan()
+    {
+        return $this->belongsTo(Penerbangan::class, 'id_penerbangan', 'id_penerbangan');
     }
+    
 
     public function pemesanan(){
         return $this->hasOne(Pemesanan::class, 'id_tiket');

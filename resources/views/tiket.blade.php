@@ -143,54 +143,66 @@
             Find the Best Flights for Your Journey!
         </h1>
         <div class="form-container">
-                <form action="{{ route('tiket.search') }}" method="GET">
-                    <div class="row">
-                        <div class="col mb-3">
-                        <label for="from" class="form-label">Dari</label>
-                            <select class="form-select" id="from" name="from" required>
-                                <option value="" disabled selected>Berangkat dari mana?</option>
-                                @foreach ($bandaraAsal as $asal)
-                                    <option value="{{ $asal }}">{{ $asal }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col mb-3">
-                        <label for="class" class="form-label">Kelas</label>
-                        <select class="form-select" id="class" name="class" required>
-                            <option value="" disabled selected>Pilih Kelas Kursi</option>
-                            @foreach ($kelas as $kls)
-                                <option value="{{ $kls }}">{{ $kls }}</option>
-                            @endforeach
-                        </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col mb-3">
-                            <label for="to" class="form-label">Ke</label>
-                            <select class="form-select" id="to" name="to" required>
-                                <option value="" disabled selected>Mau ke mana?</option>
-                                @foreach ($bandaraTujuan as $tujuan)
-                                    <option value="{{ $tujuan }}">{{ $tujuan }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col mb-3">
-                            <label for="date" class="form-label">Tanggal</label>
-                            <input type="date" class="form-control" id="date" name="date" required>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary">Cari</button>
-                    </div>
-                </form>
+        <form id="searchForm" action="{{ route('tiketView') }}" method="GET">
+            <div class="row">
+                <div class="col mb-3">
+                    <label for="from" class="form-label">Dari</label>
+                    <select class="form-select" id="from" name="from" required>
+                        <option value="" disabled selected>Berangkat dari mana?</option>
+                        @foreach ($bandaraAsalList as $asal)
+                            <option value="{{ $asal }}">{{ $asal }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col mb-3">
+                    <label for="class" class="form-label">Kelas</label>
+                    <select class="form-select" id="class" name="class" required>
+                        <option value="" disabled selected>Pilih Kelas Kursi</option>
+                        @foreach ($kelasList as $kls)
+                            <option value="{{ $kls }}">{{ $kls }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col mb-3">
+                    <label for="to" class="form-label">Ke</label>
+                    <select class="form-select" id="to" name="to" required>
+                        <option value="" disabled selected>Mau ke mana?</option>
+                        @foreach ($bandaraTujuanList as $tujuan)
+                            <option value="{{ $tujuan }}">{{ $tujuan }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col mb-3">
+                    <label for="date" class="form-label">Tanggal</label>
+                    <input type="date" class="form-control" id="date" name="date" required>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">Cari</button>
+            </div>
+        </form>
 
-            <script>
-                const validateForm = () => {
-                    alert("Data Anda Berhasil Disimpan !");
-                    window.location.href = "{{ url('/tiketView') }}";
-                    return false;
-                }
-            </script>
+        <script>
+            // Fungsi untuk menangani form submit dan pengalihan
+            document.getElementById('searchForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // Mencegah form dari reset otomatis
+
+                // Ambil nilai input dari form
+                var from = document.getElementById("from").value;
+                var to = document.getElementById("to").value;
+                var classType = document.getElementById("class").value;
+                var date = document.getElementById("date").value;
+
+                // Bangun URL query string
+                var url = '{{ route("tiketView") }}' + "?from=" + from + "&to=" + to + "&class=" + classType + "&date=" + date;
+
+                // Redirect ke halaman tiketView dengan query string
+                window.location.href = url;
+            });
+        </script>
+
         </div>
     </div>
 </div>
