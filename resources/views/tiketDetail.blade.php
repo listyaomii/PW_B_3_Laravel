@@ -284,7 +284,7 @@
                 <h1><strong>IDR {{ number_format($tiket->harga, 0, ',', '.') }}</strong></h1>
             </div>
             <div class="col-lg-6 text-lg-end">
-                <a href="{{ url('/formPemesanan/'.$tiket->id_penerbangan) }}" class="btn btn-primary btn-lg">Pesan Sekarang</a>
+                <a href="{{ url('/formPemesanan/'.$tiket->id_tiket) }}" class="btn btn-primary btn-lg">Pesan Sekarang</a>
             </div>
         </div>
     </div>

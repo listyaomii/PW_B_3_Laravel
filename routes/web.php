@@ -107,7 +107,7 @@ Route::get('/tiketDetail', function(){
 
 Route::get('/pembayaran', function(){
     return view('pembayaran');
-});
+})->name('pembayaran');
 
 Route::get('/refund', function () {
     return view('refund');

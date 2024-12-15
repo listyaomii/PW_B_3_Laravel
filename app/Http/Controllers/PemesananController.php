@@ -46,17 +46,15 @@ class PemesananController extends Controller
             'kewarganegaraan' => 'required|string',
         ]);
     
-        // Debug: cek data request
-        dd($request->all()); // Menampilkan data yang diterima dari form
     
         // Menyimpan data ke database
         Penumpang::create([
-            'title_penumpang' => $request->input('inlineRadioOptions'),
-            'nama_lengkap' => $request->input('nama'),
-            'no_identitas' => $request->input('identitas'),
-            'no_telp' => $request->input('hp'),
-            'tgl_lahir' => $request->input('tglLahir'),
-            'kewarganegaraan' => $request->input('wargaNegara'),
+            'title_penumpang' => $request->input('title_penumpang'),
+            'nama_lengkap' => $request->input('nama_lengkap'),
+            'no_identitas' => $request->input('no_identitas'),
+            'no_telp' => $request->input('no_telp'),
+            'tgl_lahir' => $request->input('tgl_lahir'),
+            'kewarganegaraan' => $request->input('kewarganegaraan'),
         ]);
     
         // Redirect setelah data disimpan

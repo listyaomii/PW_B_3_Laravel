@@ -215,26 +215,26 @@
     <!-- form penumpang  -->
     <div class="d-flex justify-content-start">
         <div class="card ms-5 me-5">
-        <form action="{{ route('penumpang.store') }}" method="POST" onsubmit="return validateForm()">
+        <form action="{{ route('penumpang.store') }}" method="POST">
             @csrf
             <!-- radio  -->
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="tuan" value="Tuan">
+                <input class="form-check-input" type="radio" name="title_penumpang" id="tuan" value="Tuan">
                 <label class="form-check-label" for="inlineRadio1">Tuan</label>
             </div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="nyonya" value="Nyonya">
+                <input class="form-check-input" type="radio" name="title_penumpang" id="nyonya" value="Nyonya">
                 <label class="form-check-label" for="inlineRadio2">Nyonya</label>
             </div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="nona" value="Nona">
+                <input class="form-check-input" type="radio" name="title_penumpang" id="nona" value="Nona">
                 <label class="form-check-label" for="inlineRadio3">Nona</label>
             </div>
 
             <!-- Nama, hp, email -->
             <div class="mb-3 mt-3">
                 <label for="nama" class="form-label" style="font-size:16px;"><strong>Nama Lengkap</strong></label>
-                <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Depan & Nama Belakang penumpang" required>
+                <input type="text" class="form-control" id="nama" name="nama_lengkap" placeholder="Nama Depan & Nama Belakang penumpang" required>
             </div>
             <!-- <div class="mb-3 mt-2">
                 <label for="email" class="form-label" style="font-size:16px;"><strong>E-mail</strong></label>
@@ -242,19 +242,19 @@
             </div> -->
             <div class="mb-3 mt-2">
                 <label for="identitas" class="form-label" style="font-size:16px;"><strong>Nomor Identitas</strong></label>
-                <input type="text" class="form-control" id="identitas" name="identitas" placeholder="Nomor KTP/Passport" required>
+                <input type="text" class="form-control" id="identitas" name="no_identitas" placeholder="Nomor KTP/Passport" required>
             </div>
             <div class="mb-3 mt-2">
                 <label for="hp" class="form-label" style="font-size:16px;"><strong>Nomor Telepon</strong></label>
-                <input type="text" class="form-control" id="hp" name="hp" placeholder="Masukkan 11-13 digit" required>
+                <input type="text" class="form-control" id="hp" name="no_telp" placeholder="Masukkan 11-13 digit" required>
             </div>
             <div class="mb-3 mt-2">
                 <label for="tglLahir" class="form-label" style="font-size:16px;"><strong>Tanggal Lahir</strong></label>
-                <input type="date" class="form-control" id="tglLahir" name="tglLahir" required>
+                <input type="date" class="form-control" id="tglLahir" name="tgl_lahir" required>
             </div>
             <div class="mb-3 mt-2">
                 <label for="wargaNegara" class="form-label" style="font-size:16px;"><strong>Kewarganegaraan</strong></label>
-                <select class="form-select form-select-sm" id="wargaNegara" name="wargaNegara" aria-label="Medium select example" required>
+                <select class="form-select form-select-sm" id="wargaNegara" name="kewarganegaraan" aria-label="Medium select example" required>
                     <option value="" disabled selected>pilih warga negara</option>
                     <option value="indonesia">Indonesia</option>
                     <option value="thailand">Thailand</option>
@@ -282,24 +282,18 @@
     </div>
 
     <script>
-    const validateForm = () => {
-        const radioButtons = document.getElementsByName('inlineRadioOptions');
-        let isRadioSelected = false;
-        for (let radio of radioButtons) {
-            if (radio.checked) {
-                isRadioSelected = true;
-                break;
-            }
-        }
+        // const validateForm = () => {
+        //     const radioButtons = document.getElementsByName('title_penumpang');
+        //     const isRadioSelected = Array.from(radioButtons).some(radio => radio.checked);
 
-        // Validasi setiap field
-        if (!isRadioSelected) {
-            alert("Pilih Tuan/Nyonya/Nona terlebih dahulu!");
-            return false; // Cegah form disubmit
-        }
+        //     if (!isRadioSelected) {
+        //         alert("Pilih Tuan/Nyonya/Nona terlebih dahulu!");
+        //         return false; // Cegah form disubmit
+        //     }
 
-        return true; // Jika validasi berhasil, form akan disubmit
-    }
+        //     return true; // Validasi berhasil, form akan disubmit
+        // };
+
 </script>
 
 </body>
