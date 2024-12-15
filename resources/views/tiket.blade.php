@@ -146,22 +146,22 @@
                 <form action="{{ route('tiket.search') }}" method="GET">
                     <div class="row">
                         <div class="col mb-3">
-                            <label for="from" class="form-label">Dari</label>
+                        <label for="from" class="form-label">Dari</label>
                             <select class="form-select" id="from" name="from" required>
                                 <option value="" disabled selected>Berangkat dari mana?</option>
-                                @foreach ($tikets as $tiket)
-                                    <option value="{{ $tiket->penerbangan->bandara_asal }}">{{ $tiket->penerbangan->bandara_asal }}</option>
+                                @foreach ($bandaraAsal as $asal)
+                                    <option value="{{ $asal }}">{{ $asal }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col mb-3">
-                            <label for="class" class="form-label">Kelas</label>
-                            <select class="form-select" id="class" name="class" required>
-                                <option value="" disabled selected>Pilih Kelas Kursi</option>
-                                @foreach ($tikets as $tiket)
-                                    <option value="{{ $tiket->kelas }}">{{ $tiket->kelas }}</option>
-                                @endforeach
-                            </select>
+                        <label for="class" class="form-label">Kelas</label>
+                        <select class="form-select" id="class" name="class" required>
+                            <option value="" disabled selected>Pilih Kelas Kursi</option>
+                            @foreach ($kelas as $kls)
+                                <option value="{{ $kls }}">{{ $kls }}</option>
+                            @endforeach
+                        </select>
                         </div>
                     </div>
                     <div class="row">
@@ -169,8 +169,8 @@
                             <label for="to" class="form-label">Ke</label>
                             <select class="form-select" id="to" name="to" required>
                                 <option value="" disabled selected>Mau ke mana?</option>
-                                @foreach ($tikets as $tiket)
-                                    <option value="{{ $tiket->penerbangan->bandara_tujuan }}">{{ $tiket->penerbangan->bandara_tujuan }}</option>
+                                @foreach ($bandaraTujuan as $tujuan)
+                                    <option value="{{ $tujuan }}">{{ $tujuan }}</option>
                                 @endforeach
                             </select>
                         </div>

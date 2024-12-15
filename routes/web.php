@@ -31,49 +31,61 @@ Route::get('/pesanan', function () {
     return view('pesanan');
 });
 
+// Route::prefix('tiket')->group(function () {
+//     // Route untuk pencarian tiket
+//     Route::get('/', [TiketController::class, 'search'])->name('tiket.search');
+    
+//     // Route untuk menampilkan halaman tiket
+//     Route::get('/index', function () {
+//         return view('tiket', ['tikets' => \App\Models\Tiket::with('penerbangan')->get()]);
+//     })->name('tiket.index');
+// });
+Route::get('/tiket', [TiketController::class, 'showSearchForm'])->name('tiket.form');
 Route::get('/tiket/search', [TiketController::class, 'search'])->name('tiket.search');
-Route::get('/tiket', [TiketController::class, 'index'])->name('tikets.index');
+Route::get('/tiketView', [TiketController::class, 'index'])->name('tiketView');
+
+
 
 Route::get('/profile', function () {
     return view('profile');
 });
 
-Route::get('/tiketView', function () {
-    return view('tiketView', [
-        'tiketList' => [
-            [
-            'maskapai' => "TransNusa",
-            'jamBerangkat' => "07:00",
-            'berangkat' => "CGK",
-            'durasi' => "1j 40m",
-            'tipe' => "langsung",
-            'jamTiba' => "08:40",
-            'tujuan' => "DPS",
-            'harga' => "890.000",
-            ],
-            [
-            'maskapai' => "Lion Air",
-            'jamBerangkat' => "08:00",
-            'berangkat' => "CGK",
-            'durasi' => "1j 45m",
-            'tipe' => "langsung",
-            'jamTiba' => "09:45",
-            'tujuan' => "DPS",
-            'harga' => "950.000",
-            ],
-            [
-            'maskapai' => "Citilink",
-            'jamBerangkat' => "06:00",
-            'berangkat' => "CGK",
-            'durasi' => "1j 50m",
-            'tipe' => "langsung",
-            'jamTiba' => "07:50",
-            'tujuan' => "DPS",
-            'harga' => "900.000",
-            ],
-        ]
-    ]);
-});
+// Route::get('/tiketView', function () {
+//     return view('tiketView', [
+//         'tiketList' => [
+//             [
+//             'maskapai' => "TransNusa",
+//             'jamBerangkat' => "07:00",
+//             'berangkat' => "CGK",
+//             'durasi' => "1j 40m",
+//             'tipe' => "langsung",
+//             'jamTiba' => "08:40",
+//             'tujuan' => "DPS",
+//             'harga' => "890.000",
+//             ],
+//             [
+//             'maskapai' => "Lion Air",
+//             'jamBerangkat' => "08:00",
+//             'berangkat' => "CGK",
+//             'durasi' => "1j 45m",
+//             'tipe' => "langsung",
+//             'jamTiba' => "09:45",
+//             'tujuan' => "DPS",
+//             'harga' => "950.000",
+//             ],
+//             [
+//             'maskapai' => "Citilink",
+//             'jamBerangkat' => "06:00",
+//             'berangkat' => "CGK",
+//             'durasi' => "1j 50m",
+//             'tipe' => "langsung",
+//             'jamTiba' => "07:50",
+//             'tujuan' => "DPS",
+//             'harga' => "900.000",
+//             ],
+//         ]
+//     ]);
+// });
 
 Route::get('/tiketDetail', function(){
     return view('tiketDetail');

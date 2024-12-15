@@ -33,21 +33,27 @@ class TiketController extends Controller
         ->where('kelas', $class)
         ->get();
     
-        // Jika tidak ada tiket ditemukan, kirimkan pesan ke view
+        // Jika tidak ada tiket ditemukan
         if ($tikets->isEmpty()) {
-            return view('tiket', ['tikets' => $tikets, 'message' => 'Tidak ada tiket yang ditemukan.']);
+            return view('tiket', [
+                'tikets' => Tiket::with('penerbangan')->get(), // Tetap kirimkan semua tiket untuk dropdown
+                'message' => 'Tidak ada tiket yang ditemukan.'
+            ]);
         }
     
         // Kirim data tiket ke view
-        return view('tiket', compact('tikets'));
+        return view('tiket', ['tikets' => $tikets]);
     }
-    
 
-    // public function showForm()
-    // {
-    //     $tikets = Tiket::with('penerbangan')->get(); // Ambil data tiket dengan penerbangan
-    //     return view('tiket', compact('tikets')); // Pastikan view ini sesuai dengan lokasi form
-    // }
+    public function showSearchForm()
+    {
+        $bandaraAsal = Tiket::with('penerbangan')->get()->pluck('penerbangan.bandara_asal')->unique();
+        $bandaraTujuan = Tiket::with('penerbangan')->get()->pluck('penerbangan.bandara_tujuan')->unique();
+        $kelas = Tiket::select('kelas')->distinct()->pluck('kelas');
+
+        return view('tiket', compact('bandaraAsal', 'bandaraTujuan', 'kelas'));
+    }
+
     
 
     public function index()
