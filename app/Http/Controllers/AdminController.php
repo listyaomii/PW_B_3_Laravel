@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\User;
+use App\Models\Refund;
+use App\Models\Penerbangan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class AdminController extends Controller
 {
@@ -125,6 +129,69 @@ class AdminController extends Controller
         return redirect()->route('admin.index')->with('message', 'Admin updated successfully.');
     }
 
+    public function updateUser(Request $request, $id)
+{
+    \Log::info('Update User Request', [
+        'id' => $id,
+        'data' => $request->all()
+    ]);
+
+    try {
+        $user = User::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'nama_user' => 'required|string|max:255',
+            'email_user' => 'required|email|unique:users,email_user,' . $id . ',id_user',
+        ]);
+
+        $user->update([
+            'nama_user' => $validatedData['nama_user'],
+            'email_user' => $validatedData['email_user']
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User berhasil diupdate',
+            'user' => $user
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Update User Error', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal mengupdate user: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+public function deleteUser($id)
+{
+    \Log::info('Delete User Request', ['id' => $id]);
+
+    try {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User berhasil dihapus'
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Delete User Error', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal menghapus user: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
     // Remove the specified admin from storage
     public function destroy($id)
     {
@@ -136,8 +203,24 @@ class AdminController extends Controller
 
     // Optionally show a dashboard page for the admin
     public function dashboard()
-    {
-        return view('admin.dashboard');
-    }
+{
+    // Ambil data dari database
+    $totalUsers = User::count();
+    $totalRefunds = Refund::count();
+    $totalPenerbangan = Penerbangan::count();
+    $users = User::all();
+
+    // Ambil admin yang sedang login dari session
+    $admin = session('admin');
+
+    return view('admin', [
+        'totalUsers' => $totalUsers,
+        'totalRefunds' => $totalRefunds,
+        'totalPenerbangan' => $totalPenerbangan,
+        'users' => $users,
+        'admin' => $admin
+    ]);
+}
+
 }
 

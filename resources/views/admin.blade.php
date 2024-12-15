@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin Panel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -111,18 +112,17 @@
     </nav>
     <!-- end navbar -->
 
-    <!-- Main content area -->
     <div class="main-container">
         <!-- Admin Info Section -->
         <div class="admin-info">
             <div class="card">
                 <div class="card-body">
                     <h2 class="card-title text-center">Admin Info</h2>
-                    <p class="card-text">Nama: <strong>admin</strong></p>
-                    <p class="card-text">Email: <strong>admin@gmail.com</strong></p>
+                    <p class="card-text">Nama: <strong>{{ session('user.nama_admin') }}</strong></p>
+                    <p class="card-text">Email: <strong>{{ session('user.email_admin') }}</strong></p>
                     <p class="card-text">Password: <strong>********</strong></p>
                     <div class="d-flex justify-content-center">
-                        <a href="{{url('/login')}}" type="button" class="btn btn-danger btn-logout">Logout</a>
+                        <a href="{{ route('logout') }}" type="button" class="btn btn-danger btn-logout">Logout</a>
                     </div>
                 </div>
             </div>
@@ -135,19 +135,19 @@
                 <div class="col-md-4">
                     <div class="dashboard-card text-center">
                         <h3>Jumlah Pengguna</h3>
-                        <p class="display-4">120</p>
+                        <p class="display-4">{{ $totalUsers }}</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="dashboard-card text-center">
                         <h3>Jumlah Konfirmasi Refund</h3>
-                        <p class="display-4">15</p>
+                        <p class="display-4">{{ $totalRefunds }}</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="dashboard-card text-center">
                         <h3>Jumlah Penerbangan</h3>
-                        <p class="display-4">50</p>
+                        <p class="display-4">{{ $totalPenerbangan }}</p>
                     </div>
                 </div>
             </div>
@@ -170,118 +170,47 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach($users as $user)
                         <tr>
-                            <td>1</td>
-                            <td>John Doe</td>
-                            <td>john.doe@example.com</td>
+                            <td>{{ $user->id_user }}</td>
+                            <td>{{ $user->nama_user }}</td>
+                            <td>{{ $user->email_user }}</td>
                             <td>
-                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal1">Edit</button>
-                                <button class="btn btn-danger btn-sm" onclick="confirmDelete()">Hapus</button>
+                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $user->id_user }}">Edit</button>
+                                <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ $user->id_user }})">Hapus</button>
                             </td>
                         </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Jane Smith</td>
-                            <td>jane.smith@example.com</td>
-                            <td>
-                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal2">Edit</button>
-                                <button class="btn btn-danger btn-sm"  onclick="confirmDelete()">Hapus</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Robert Johnson</td>
-                            <td>robert.johnson@example.com</td>
-                            <td>
-                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal3">Edit</button>
-                                <button class="btn btn-danger btn-sm" onclick="confirmDelete()">Hapus</button>
-                            </td>
-                        </tr>
+
+                        <!-- Edit Modal for each user -->
+                        <div class="modal fade" id="editModal{{ $user->id_user }}" tabindex="-1" aria-labelledby="editModalLabel{{ $user->id_user }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editModalLabel{{ $user->id_user }}">Edit Pengguna</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="editForm{{ $user->id_user }}">
+                                            <div class="mb-3">
+                                                <label for="editName{{ $user->id_user }}" class="form-label">Nama</label>
+                                                <input type="text" class="form-control" id="editName{{ $user->id_user }}" value="{{ $user->nama_user }}">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="editEmail{{ $user->id_user }}" class="form-label">Email</label>
+                                                <input type="email" class="form-control" id="editEmail{{ $user->id_user }}" value="{{ $user->email_user }}">
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                        <button type="button" class="btn btn-primary" onclick="saveChanges({{ $user->id_user }})">Simpan Perubahan</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
                     </tbody>
                 </table>
-            </div>
-        </div>
-    </div>
-    <!-- end main content -->
-
-    <!-- Edit User Modal -->
-    <div class="modal fade" id="editModal1" tabindex="-1" aria-labelledby="editModalLabel1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel1">Edit Pengguna</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="mb-3">
-                            <label for="editName1" class="form-label">Nama</label>
-                            <input type="text" class="form-control" id="editName1" value="John Doe">
-                        </div>
-                        <div class="mb-3">
-                            <label for="editEmail1" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="editEmail1" value="john.doe@example.com">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-primary">Simpan Perubahan</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="editModal2" tabindex="-1" aria-labelledby="editModalLabel2" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel2">Edit Pengguna</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="mb-3">
-                            <label for="editName2" class="form-label">Nama</label>
-                            <input type="text" class="form-control" id="editName2" value="Jane Smith">
-                        </div>
-                        <div class="mb-3">
-                            <label for="editEmail2" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="editEmail2" value="jane.smith@example.com">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-primary">Simpan Perubahan</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="editModal3" tabindex="-1" aria-labelledby="editModalLabel3" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel3">Edit Pengguna</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="mb-3">
-                            <label for="editName3" class="form-label">Nama</label>
-                            <input type="text" class="form-control" id="editName3" value="Robert Johnson">
-                        </div>
-                        <div class="mb-3">
-                            <label for="editEmail3" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="editEmail3" value="robert.johnson@example.com">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-primary">Simpan Perubahan</button>
-                </div>
             </div>
         </div>
     </div>
@@ -289,12 +218,96 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <script>
-        function confirmDelete() {
-            if (confirm('Apakah Anda yakin ingin menghapus user ini?')) {
-                alert('User berhasil dihapus.');
+        function saveChanges(userId) {
+    const nama = document.getElementById(`editName${userId}`).value;
+    const email = document.getElementById(`editEmail${userId}`).value;
+
+    if (!nama || !email) {
+        alert('Nama dan Email tidak boleh kosong');
+        return;
+    }
+
+    fetch(`/admin/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            nama_user: nama,
+            email_user: email
+        })
+    })
+    .then(response => {
+        // Log response status
+        console.log('Response Status:', response.status);
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response Data:', data);
+        
+        if (data.success) {
+            alert(data.message);
+            
+            // Update tabel
+            const row = document.querySelector(`tr:has(button[onclick="confirmDelete(${userId})"])`);
+            if (row) {
+                row.querySelector('td:nth-child(2)').textContent = nama;
+                row.querySelector('td:nth-child(3)').textContent = email;
             }
+
+            // Tutup modal
+            const modalElement = document.getElementById(`editModal${userId}`);
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+                modal.hide();
+            }
+        } else {
+            alert(data.message || 'Gagal mengupdate user');
         }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan: ' + error.message);
+    });
+}
+
+function confirmDelete(userId) {
+    if (confirm('Apakah Anda yakin ingin menghapus user ini?')) {
+        fetch(`/admin/users/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            console.log('Response Status:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Response Data:', data);
+            
+            if (data.success) {
+                alert(data.message);
+                
+                // Hapus baris dari tabel
+                const row = document.querySelector(`tr:has(button[onclick="confirmDelete(${userId})"])`);
+                if (row) {
+                    row.remove();
+                }
+            } else {
+                alert(data.message || 'Gagal menghapus user');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan: ' + error.message);
+        });
+    }
+}
     </script>
 </body>
-
 </html>

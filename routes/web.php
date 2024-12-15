@@ -2,22 +2,47 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\TiketController;
+use App\Models\User;
+use App\Models\Refund;
+use App\Models\Penerbangan;
 
 
 Route::get('/home', function () {
-    // Cek apakah user sudah login dan memiliki role user
     if (!session()->has('user') || session('user.role') !== 'user') {
         return redirect()->route('login')->with('error', 'Anda tidak memiliki akses');
     }
     return view('home');
 })->name('home');
 
+Route::get('/admin', function () {
+    // Cek apakah user adalah admin
+    if (!session()->has('user') || session('user.role') !== 'admin') {
+        return redirect()->route('login')->with('error', 'Anda tidak memiliki akses');
+    }
+
+    // Ambil data dari database
+    $totalUsers = User::count();
+    $totalRefunds = Refund::count();
+    $totalPenerbangan = Penerbangan::count();
+    $users = User::all();
+
+    return view('admin', [
+        'totalUsers' => $totalUsers,
+        'totalRefunds' => $totalRefunds,
+        'totalPenerbangan' => $totalPenerbangan,
+        'users' => $users
+    ]);
+})->name('admin.dashboard');
+
 Route::get('/login', [UserController::class, 'loginForm'])->name('login');
 
 Route::get('/', function () {
     return view('Login');
 })->name('login'); // Optional if you want the homepage to also use the login page
+
+Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 
 // Define the register route
 Route::resource('/user', UserController::class);
@@ -26,10 +51,16 @@ Route::post('/login', [UserController::class, 'login'])->name('user.login');  //
 Route::post('/register', [UserController::class, 'register'])->name('user.register.post');
 
 Route::get('/profile', [UserController::class, 'showProfile'])->name('profile');
-
+Route::post('/profile/update', [UserController::class, 'update'])->name('user.update');
+Route::delete('/profile/delete', [UserController::class, 'deleteAccount'])
+    ->name('user.delete');
+    
 Route::get('/pesanan', function () {
     return view('pesanan');
 });
+
+Route::put('/admin/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+Route::delete('/admin/users/{id}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
 
 // Route::prefix('tiket')->group(function () {
 //     // Route untuk pencarian tiket
@@ -40,15 +71,12 @@ Route::get('/pesanan', function () {
 //         return view('tiket', ['tikets' => \App\Models\Tiket::with('penerbangan')->get()]);
 //     })->name('tiket.index');
 // });
+
 Route::get('/tiket', [TiketController::class, 'showSearchForm'])->name('tiket.form');
 Route::get('/tiket/search', [TiketController::class, 'search'])->name('tiket.search');
 Route::get('/tiketView', [TiketController::class, 'index'])->name('tiketView');
 
 
-
-Route::get('/profile', function () {
-    return view('profile');
-});
 
 // Route::get('/tiketView', function () {
 //     return view('tiketView', [
@@ -106,15 +134,6 @@ Route::get('/refund', function () {
 Route::get('/e-ticket', function () {
     return view('e-ticket');
 });
-
-
-Route::get('/admin', function () {
-    // Cek apakah user sudah login dan memiliki role admin
-    if (!session()->has('user') || session('user.role') !== 'admin') {
-        return redirect()->route('login')->with('error', 'Anda tidak memiliki akses');
-    }
-    return view('admin');
-})->name('admin.dashboard');
 
 Route::get('/kelola_tiket', function () {
     return view('kelola_tiket');

@@ -131,17 +131,20 @@
         <!-- container yang ada di sebelah kiri -->
         <div class="container-lg">
             <h2 class="text-center">Profile</h2>
-            <img src="imgs/jay.jpeg" alt="Profile Picture" class="img-fluid">
-            @if(session()->has('user'))
-                <h3 class="profile-title">{{ session('user.nama_user') }}</h3>
-                <ul class="profile-details">
-                    <li><span>Nomor Telepon:</span> {{ session('user.telp_user') }}</li>
-                    <li><span>Email:</span> {{ session('user.email_user') }}</li>
-                    <li><span>Alamat:</span> {{ session('user.alamat') }}</li>
-                </ul>
-            @else
-                <h1>Pengguna tidak ditemukan</h1>
-            @endif
+            <!-- Bagian foto profil -->
+<img src="{{ $fotoUrl }}" alt="Profile Picture" class="img-fluid">
+
+<!-- Bagian data user -->
+@if($user)
+    <h3 class="profile-title">{{ $user->nama_user ?? 'Nama Tidak Tersedia' }}</h3>
+    <ul class="profile-details">
+        <li><span>Nomor Telepon:</span> {{ $user->telp_user ?? 'Tidak ada' }}</li>
+        <li><span>Email:</span> {{ $user->email_user ?? 'Tidak ada' }}</li>
+        <li><span>Alamat:</span> {{ $user->alamat ?? 'Tidak ada' }}</li>
+    </ul>
+@else
+    <h1>Pengguna tidak ditemukan</h1>
+@endif
             <!-- Tombol Logout dengan modal -->
             <div class="d-flex justify-content-center">
                 <button type="button" class="btn btn-outline-danger" style="margin-top: 20px;" data-bs-toggle="modal" data-bs-target="#logoutModal">
@@ -157,56 +160,33 @@
         <div class="content">
             <!-- Form Edit Profile -->
             <h4>Data Pribadi</h4>
-            <form class="form-edit">
-                <!-- Bagian Edit Foto Profil -->
-                <div class="mb-3">
-                    <label for="uploadFoto" class="form-label">Ubah Foto Profil</label>
-                    <input type="file" class="form-control" id="uploadFoto">
-                </div>
-                <div class="mb-3">
-                    <label for="namaLengkap" class="form-label">Nama Lengkap</label>
-                    <input type="text" class="form-control" id="namaLengkap" placeholder="Masukkan Nama Lengkap">
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <label for="jenisKelamin" class="form-label">Jenis Kelamin</label>
-                        <select id="jenisKelamin" class="form-control">
-                            <option selected>Pilih Jenis Kelamin</option>
-                            <option>Laki-laki</option>
-                            <option>Perempuan</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="tanggalLahir" class="form-label">Tanggal Lahir</label>
-                        <input type="date" class="form-control" id="tanggalLahir">
-                    </div>
-                </div>
-                <!-- <div class="mb-3">
-                    <label for="kotaTinggal" class="form-label">Kota Tempat Tinggal</label>
-                    <input type="text" class="form-control" id="kotaTinggal" placeholder="Kota Tempat Tinggal">
-                </div> -->
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" placeholder="Masukkan Email">
-                </div>
-                <div class="mb-3">
-                    <label for="noHp" class="form-label">No. Handphone</label>
-                    <input type="tel" class="form-control" id="noHp" placeholder="No. Handphone">
-                </div>
+            <form class="form-edit" action="{{ route('user.update')}}" method="POST" enctype="multipart/form-data">
+    @csrf
+    <div class="mb-3">
+        <label for="uploadFoto" class="form-label">Ubah Foto Profil</label>
+        <input type="file" class="form-control" id="uploadFoto" name="foto" accept="image/*">
+    </div>
+    <div class="mb-3">
+        <label for="namaLengkap" class="form-label">Nama Lengkap</label>
+        <input type="text" class="form-control" id="namaLengkap" name="nama_user" value="{{ $user->nama_user }}" placeholder="Masukkan Nama Lengkap">
+    </div>
+    
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" name="email_user" value="{{ $user->email_user }}" placeholder="Masukkan Email">
+    </div>
+    <div class="mb-3">
+        <label for="noHp" class="form-label">No. Handphone</label>
+        <input type="tel" class="form-control" id="noHp" name="telp_user" value="{{ $user->telp_user }}" placeholder="No. Handphone">
+    </div>
+    <div class="mb-3">
+        <label for="alamat" class="form-label">Alamat</label>
+        <input type="text" class="form-control" id="alamat" name="alamat" value="{{ $user->alamat }}" placeholder="Alamat">
+    </div>
 
-                <!-- Bagian Edit Password -->
-                <div class="mb-3">
-                    <label for="passwordBaru" class="form-label">Password Baru</label>
-                    <input type="password" class="form-control" id="passwordBaru" placeholder="Masukkan password baru">
-                </div>
-                <div class="mb-3">
-                    <label for="confirmPassword" class="form-label">Konfirmasi Password</label>
-                    <input type="password" class="form-control" id="confirmPassword" placeholder="Ulangi password baru">
-                </div>
-
-                <button type="submit" class="btn btn-primary" onclick="confirmSimpan('Simpan')">Simpan</button>
-                <button type="reset" class="btn btn-secondary"  onclick="confirmSimpan('Batal')">Batal</button>
-            </form>
+    <button type="submit" class="btn btn-primary">Simpan</button>
+    <button type="reset" class="btn btn-secondary" onclick="confirmSimpan('Batal')">Batal</button>
+</form>
         </div>
     </div>
     <!-- end main content -->
@@ -224,30 +204,34 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <a href="{{ route('login') }}" type="button" class="btn btn-danger">Logout</a>
+                    <a href="{{ route('logout') }}" type="button" class="btn btn-danger">Logout</a>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal Delete Account -->
-    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteAccountModalLabel">Delete Account Confirmation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Are you sure you want to delete your account? This action cannot be undone.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <a href="{{ route('login') }}" type="button" class="btn btn-danger">Delete Account</a>
-                </div>
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteAccountModalLabel">Delete Account Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete your account? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form action="{{ route('user.delete') }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Delete Account</button>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Script JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
@@ -255,42 +239,34 @@
 
     <!-- Tempatkan script JavaScript Anda di sini -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const formEdit = document.querySelector(".form-edit");
-            const profileDetails = document.querySelectorAll(".profile-details li");
+    document.addEventListener("DOMContentLoaded", function() {
+        const formEdit = document.querySelector(".form-edit");
+        const profileDetails = document.querySelectorAll(".profile-details li");
 
-            formEdit.addEventListener("submit", function(event) {
-                event.preventDefault(); // Mencegah form submit secara default
+        formEdit.addEventListener("submit", function(event) {
+            // Hapus preventDefault agar form bisa submit
+            // event.preventDefault(); 
 
-                // Ambil nilai dari input
-                const namaLengkap = document.getElementById("namaLengkap").value;
-                const tanggalLahir = document.getElementById("tanggalLahir").value;
-                const kotaTinggal = document.getElementById("kotaTinggal").value;
-                const email = document.getElementById("email").value;
-                const noHp = document.getElementById("noHp").value;
+            // Optional: Validasi sederhana
+            const namaLengkap = document.getElementById("namaLengkap").value;
+            const email = document.getElementById("email").value;
+            const noHp = document.getElementById("noHp").value;
+            const alamat = document.getElementById("alamat").value;
 
-                // Perbarui detail profil
-                profileDetails[0].innerHTML = `<span>Nomor Telepon:</span> ${noHp}`;
-                profileDetails[1].innerHTML = `<span>Email:</span> ${email}`;
-                profileDetails[2].innerHTML = `<span>Tanggal Lahir :</span> ${tanggalLahir}`;
-                profileDetails[3].innerHTML = `<span>Alamat:</span> ${kotaTinggal}`; // Ganti dengan alamat yang sesuai jika ada
-
-                // Jika Anda ingin mengosongkan form setelah menyimpan
-                formEdit.reset();
-            });
-        });
-    </script>
-    <script>
-        function confirmSimpan(action){
-            if(action==='Simpan'){
-                alert('Perubahan Berhasil');
-                return false;
-            }else if(action==='Batal'){
-                alert('Batal melakukan perubahan');
-                return false;
+            if (!namaLengkap || !email || !noHp || !alamat) {
+                alert("Mohon isi semua field");
+                event.preventDefault();
+                return;
             }
-            
+        });
+    });
+
+    function confirmSimpan(action) {
+        if (action === 'Batal') {
+            return confirm('Apakah Anda yakin ingin membatalkan perubahan?');
         }
-    </script>
+        return true;
+    }
+</script>
 </body>
 </html>
