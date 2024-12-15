@@ -33,6 +33,7 @@
         .custom-navbar .navbar-nav .nav-link {
             color: black; /* Mengubah warna teks */
             font-weight: 100;
+            
         }
 
         .navbar {
@@ -142,43 +143,47 @@
             Find the Best Flights for Your Journey!
         </h1>
         <div class="form-container">
-            <form onsubmit="return validateForm()">
-                <div class="row">
-                    <div class="col mb-3">
-                        <label for="from" class="form-label">Dari</label>
-                        <select class="form-select" id="from" placeholder="Berangkat dari mana?" required>
-                            <option value="" disabled selected>Berangkat dari mana?</option>
-                            <option value="1">Jakarta</option>
-                            <option value="2">Bali</option>
-                        </select>
+                <form action="{{ route('tiket.search') }}" method="GET">
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label for="from" class="form-label">Dari</label>
+                            <select class="form-select" id="from" name="from" required>
+                                <option value="" disabled selected>Berangkat dari mana?</option>
+                                @foreach ($tikets as $tiket)
+                                    <option value="{{ $tiket->penerbangan->bandara_asal }}">{{ $tiket->penerbangan->bandara_asal }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col mb-3">
+                            <label for="class" class="form-label">Kelas</label>
+                            <select class="form-select" id="class" name="class" required>
+                                <option value="" disabled selected>Pilih Kelas Kursi</option>
+                                @foreach ($tikets as $tiket)
+                                    <option value="{{ $tiket->kelas }}">{{ $tiket->kelas }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
-                    <div class="col mb-3">
-                        <label for="class" class="form-label">Kelas</label>
-                        <select class="form-select" id="class" required>
-                            <option value="" disabled selected>Pilih Kelas Kursi</option>
-                            <option value="1">Ekonomi</option>
-                            <option value="2">Bisnis</option>
-                        </select>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label for="to" class="form-label">Ke</label>
+                            <select class="form-select" id="to" name="to" required>
+                                <option value="" disabled selected>Mau ke mana?</option>
+                                @foreach ($tikets as $tiket)
+                                    <option value="{{ $tiket->penerbangan->bandara_tujuan }}">{{ $tiket->penerbangan->bandara_tujuan }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col mb-3">
+                            <label for="date" class="form-label">Tanggal</label>
+                            <input type="date" class="form-control" id="date" name="date" required>
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col mb-3">
-                        <label for="to" class="form-label">Ke</label>
-                        <select class="form-select" id="to" placeholder="Mau ke mana?" required>
-                            <option value="" disabled selected>Mau ke mana?</option>
-                            <option value="1">Bali</option>
-                            <option value="2">Yogyakarta</option>
-                        </select>
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">Cari</button>
                     </div>
-                    <div class="col mb-3">
-                        <label for="date" class="form-label">Tanggal</label>
-                        <input type="date" class="form-control" id="date" required>
-                    </div>
-                </div>
-                <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary">Cari</button>
-                </div>
-            </form>
+                </form>
+
             <script>
                 const validateForm = () => {
                     alert("Data Anda Berhasil Disimpan !");
@@ -261,11 +266,11 @@
 </div>
 
 </body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeo9w2MHAe0XlWJHrD/GA6iDh/s4n2bWXsb6YhShu5ZHQ3h" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeo9w2MHAe0XlWJHrD/GA6iDh/s4n2bWXsb6YhShu5ZHQ3h" crossorigin="anonymous">
+    const validateForm = () => {
+    alert("Data Anda Berhasil Disimpan !");
+    window.location.href = "{{ route('tiketView') }}";  // Atau sesuaikan ke halaman lain jika perlu
+    return false;
+}
+</script>
 </html>
-
-
-
-
-
-

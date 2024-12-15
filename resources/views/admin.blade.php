@@ -122,7 +122,7 @@
                     <p class="card-text">Email: <strong>admin@gmail.com</strong></p>
                     <p class="card-text">Password: <strong>********</strong></p>
                     <div class="d-flex justify-content-center">
-                        <a href="{{url('/Login')}}" type="button" class="btn btn-danger btn-logout">Logout</a>
+                        <a href="{{url('/login')}}" type="button" class="btn btn-danger btn-logout">Logout</a>
                     </div>
                 </div>
             </div>

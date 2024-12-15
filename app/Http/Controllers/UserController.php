@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,23 +18,36 @@ class UserController extends Controller
     // Proses login
     public function login(Request $request)
     {
-        $validatedData = $request->validate([
+        $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        $user = User::where('username', $request->username)->first();
-
-        if ($user && Hash::check($request->password, $user->password)) {
-            session([
-                'id_user' => $user->id_user,
-                'nama_user' => $user->nama_user
-            ]);
-            return redirect()->route('home')->with('message', 'Login successful');
-        }else{
-            return back()->withErrors(['message' => 'Invalid credentials']);
+        // Cek login admin terlebih dahulu
+        $admin = Admin::where('nama_admin', $request->username)->first();
+        if ($admin && Hash::check($request->password, $admin->password_admin)) {
+            session(['user' => [
+                'id' => $admin->id_admin,
+                'nama' => $admin->nama_admin,
+                'email' => $admin->email_admin,
+                'role' => 'admin'
+            ]]);
+            return redirect('/admin');
         }
 
+        // Cek login user
+        $user = User::where('username', $request->username)->first();
+        if ($user && Hash::check($request->password, $user->password)) {
+            session(['user' => [
+                'id' => $user->id_user,
+                'nama' => $user->nama_user,
+                'email' => $user->email_user,
+                'role' => 'user'
+            ]]);
+            return redirect('/home');
+        }
+
+        return back()->withErrors(['username' => 'Invalid credentials']);
     }
 
     public function registerForm()

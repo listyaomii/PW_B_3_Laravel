@@ -2,10 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TiketController;
+
 
 Route::get('/home', function () {
+    // Cek apakah user sudah login dan memiliki role user
+    if (!session()->has('user') || session('user.role') !== 'user') {
+        return redirect()->route('login')->with('error', 'Anda tidak memiliki akses');
+    }
     return view('home');
-})->name('home'); 
+})->name('home');
 
 Route::get('/login', [UserController::class, 'loginForm'])->name('login');
 
@@ -25,9 +31,8 @@ Route::get('/pesanan', function () {
     return view('pesanan');
 });
 
-Route::get('/tiket', function () {
-    return view('tiket');
-});
+Route::get('/tiket/search', [TiketController::class, 'search'])->name('tiket.search');
+Route::get('/tiket', [TiketController::class, 'index'])->name('tikets.index');
 
 Route::get('/profile', function () {
     return view('profile');
@@ -90,9 +95,14 @@ Route::get('/e-ticket', function () {
     return view('e-ticket');
 });
 
+
 Route::get('/admin', function () {
+    // Cek apakah user sudah login dan memiliki role admin
+    if (!session()->has('user') || session('user.role') !== 'admin') {
+        return redirect()->route('login')->with('error', 'Anda tidak memiliki akses');
+    }
     return view('admin');
-});
+})->name('admin.dashboard');
 
 Route::get('/kelola_tiket', function () {
     return view('kelola_tiket');

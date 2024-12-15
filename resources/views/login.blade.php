@@ -60,7 +60,7 @@
 
     <div class="login-container">
         <h2>Log in</h2>
-        <form action="{{ route('user.login') }}" method="POST">
+        <form action="{{ url('/login') }}" method="POST">
         @csrf
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>
@@ -79,7 +79,7 @@
 
     </div>
 
-    <script>
+    <!-- <script>
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent form submission
 
@@ -92,7 +92,7 @@
                 window.location.href = '/home'; // Redirect to home page if not admin
             }
         });
-    </script>
+    </script> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDeMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 </html>

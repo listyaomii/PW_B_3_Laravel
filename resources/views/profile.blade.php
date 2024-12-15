@@ -132,15 +132,15 @@
         <div class="container-lg">
             <h2 class="text-center">Profile</h2>
             <img src="imgs/jay.jpeg" alt="Profile Picture" class="img-fluid">
-            @if(isset($user))
-                <h3 class="profile-title">{{$user->nama_user}}</h3>
+            @if(session()->has('user'))
+                <h3 class="profile-title">{{ session('user.nama_user') }}</h3>
                 <ul class="profile-details">
-                    <li><span>Nomor Telepon:</span> {{ $user->telp_user }}</li>
-                    <li><span>Email:</span> {{ $user->email_user }}</li>
-                    <li><span>Alamat:</span> {{ $user->alamat }}</li>
+                    <li><span>Nomor Telepon:</span> {{ session('user.telp_user') }}</li>
+                    <li><span>Email:</span> {{ session('user.email_user') }}</li>
+                    <li><span>Alamat:</span> {{ session('user.alamat') }}</li>
                 </ul>
             @else
-            <h1>Pengguna tidak ditemukan</h1>
+                <h1>Pengguna tidak ditemukan</h1>
             @endif
             <!-- Tombol Logout dengan modal -->
             <div class="d-flex justify-content-center">

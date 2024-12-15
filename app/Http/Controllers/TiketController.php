@@ -3,20 +3,69 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tiket;
+use App\Models\Penerbangan;
 use Illuminate\Http\Request;
 
 class TiketController extends Controller
 {
+    public function search(Request $request)
+    {
+        // Validasi input
+        $request->validate([
+            'from' => 'required|string',
+            'to' => 'required|string',
+            'class' => 'required|string',
+            'date' => 'required|date',
+        ]);
+    
+        // Ambil data dari form
+        $from = $request->input('from');
+        $to = $request->input('to');
+        $class = $request->input('class');
+        $date = $request->input('date');
+    
+        // Lakukan pencarian tiket berdasarkan filter
+        $tikets = Tiket::whereHas('penerbangan', function ($query) use ($from, $to, $date) {
+            $query->where('bandara_asal', $from)
+                  ->where('bandara_tujuan', $to)
+                  ->whereDate('tanggal', $date);
+        })
+        ->where('kelas', $class)
+        ->get();
+    
+        // Jika tidak ada tiket ditemukan, kirimkan pesan ke view
+        if ($tikets->isEmpty()) {
+            return view('tiket', ['tikets' => $tikets, 'message' => 'Tidak ada tiket yang ditemukan.']);
+        }
+    
+        // Kirim data tiket ke view
+        return view('tiket', compact('tikets'));
+    }
+    
+
+    // public function showForm()
+    // {
+    //     $tikets = Tiket::with('penerbangan')->get(); // Ambil data tiket dengan penerbangan
+    //     return view('tiket', compact('tikets')); // Pastikan view ini sesuai dengan lokasi form
+    // }
+    
 
     public function index()
     {
-        $tikets = Tiket::with('penerbangan')->get();
-        return response()->json($tikets);
+        $tiketList = Tiket::all(); // Ambil semua tiket atau data sesuai kebutuhan
+        return view('tiketView', compact('tiketList'));
     }
 
+    public function create()
+    {
+        // Get all penerbangan data to show in the create form
+        $penerbangans = Penerbangan::all();
+        return view('tikets.create', compact('penerbangans'));
+    }
 
     public function store(Request $request)
     {
+        // Validate and create the tiket
         $validatedData = $request->validate([
             'kelas' => 'required|string',
             'harga' => 'required|numeric',
@@ -25,26 +74,39 @@ class TiketController extends Controller
 
         $tiket = Tiket::create($validatedData);
 
-        return response()->json(["message" => "Tiket created successfully", "data" => $tiket], 201);
+        // Redirect back to the index page with a success message
+        return redirect()->route('tikets.index')->with('success', 'Tiket created successfully');
     }
-
 
     public function show($id)
     {
+        // Fetch tiket with its penerbangan and show in a view
         $tiket = Tiket::with('penerbangan')->find($id);
         if (!$tiket) {
-            return response()->json(["message" => "Tiket not found"], 404);
+            return redirect()->route('tikets.index')->with('error', 'Tiket not found');
         }
 
-        return response()->json($tiket);
+        return view('tikets.show', compact('tiket'));
     }
 
+    public function edit($id)
+    {
+        // Fetch tiket for editing and get available penerbangan
+        $tiket = Tiket::find($id);
+        $penerbangans = Penerbangan::all();
+        if (!$tiket) {
+            return redirect()->route('tikets.index')->with('error', 'Tiket not found');
+        }
+
+        return view('tikets.edit', compact('tiket', 'penerbangans'));
+    }
 
     public function update(Request $request, $id)
     {
+        // Fetch tiket and validate input
         $tiket = Tiket::find($id);
         if (!$tiket) {
-            return response()->json(["message" => "Tiket not found"], 404);
+            return redirect()->route('tikets.index')->with('error', 'Tiket not found');
         }
 
         $validatedData = $request->validate([
@@ -55,24 +117,21 @@ class TiketController extends Controller
 
         $tiket->update($validatedData);
 
-        return response()->json(["message" => "Tiket updated successfully", "data" => $tiket]);
+        // Redirect with success message
+        return redirect()->route('tikets.index')->with('success', 'Tiket updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
+        // Fetch tiket and delete
         $tiket = Tiket::find($id);
         if (!$tiket) {
-            return response()->json(["message" => "Tiket not found"], 404);
+            return redirect()->route('tikets.index')->with('error', 'Tiket not found');
         }
 
         $tiket->delete();
 
-        return response()->json(["message" => "Tiket deleted successfully"]);
+        // Redirect back with success message
+        return redirect()->route('tikets.index')->with('success', 'Tiket deleted successfully');
     }
 }
