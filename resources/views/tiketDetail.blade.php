@@ -62,7 +62,7 @@
             margin-bottom: 0px;
         }
 
-        footer{
+        footer {
             background-color: #CDEDFF;
         }
 
@@ -91,16 +91,16 @@
 
         .divider {
             height: 2px;
-            width:100%;
+            width: 100%;
             background-color: #D3D3D3;
             margin: 10px 0;
         }
 
-        img{
+        img {
             border-radius: 50%;
             border: solid 1px #D3D3D3;
             width: 40px;
-            height:40px;
+            height: 40px;
         }
 
         .text-center {
@@ -110,7 +110,7 @@
         .vertical-line {
             position: relative;
             width: 2px;
-            height: 400px; 
+            height: 400px;
             background-color: #d1d5db;
             margin-left: 20px;
             margin-right: 20px;
@@ -201,7 +201,6 @@
                   <a class="nav-link active" aria-current="page" href="{{ url('/tiket') }}">Tiket</a>
                   <a class="nav-link" href="{{url('/pesanan')}}">Pesanan</a>
                   <a class="nav-link" href="{{url('/refund')}}">Refund</a>
-                  <!-- <a class="nav-link" href="#">Login</a> -->
                   <a class="nav-link" href="{{url('/profile')}}"><i class="bi bi-person-fill"></i></a>
               </div>
           </div>
@@ -217,13 +216,14 @@
                 <table>
                     <tr>
                         <td>
-                            Min, 20 Oktober 2024
+                            {{$tiket->penerbangan->tanggal}}
                         </td>
                         <td></td>
-                        <td><span class="badge rounded-pill text-bg-secondary text-end">Ekonomi</span></td>
+                        <td><span class="badge rounded-pill text-bg-secondary text-end">{{$tiket->kelas}}</span></td>
                     </tr>
                     <tr>
-                        <td style="vertical-align:top;"><strong>07:00 </strong><br>20 Okt</td>
+                        <td style="vertical-align:top;"><strong>{{ $tiket->penerbangan->waktu_keberangkatan }} </strong>
+                        <!-- <br>{{ \Carbon\Carbon::parse($tiket->waktu_keberangkatan) }}</td> -->
                         <td rowspan="6">
                             <div class="vertical-line">
                                 <span class="circle top"></span>
@@ -232,7 +232,7 @@
                         </td>
                         <!-- Paragraf panjang di kolom ke-3 -->
                         <td style="vertical-align:top; padding-left:20px;">
-                            Soekarno Hatta
+                            {{ $tiket->penerbangan->bandara_asal }}
                         </td>
                     </tr>
                     <tr>
@@ -241,21 +241,21 @@
                             <div class="card">
                                 <div class="d-flex align-items-center" style="gap: 10px;"> 
                                     <img src="imgs/transNusa.jpeg" alt="logo transNusa" style="margin-bottom: 10px;">
-                                    <strong>TransNusa</strong>
+                                    <strong>{{ $tiket->penerbangan->maskapai }}</strong>
                                 </div>
                                 <div class="divider"></div>
                                 <p><strong>Tiket Sudah Termasuk</strong></p>
                                 <p style="font-size:16px;"><i class="ms-2 fas fa-suitcase me-3"></i> Kabin 7 kg + Bagasi 20 kg</p>
                             </div>
                         </td>
-
                     </tr>
                     <tr></tr>
                     <tr></tr>
                     <tr></tr>
                     <tr rowspan="3" style="vertical-align:bottom;">
-                        <td ><strong>08:40</strong><br>20 Okt</td>
-                        <td style="padding-left:20px;">Ngurah Rai</td>
+                        <td><strong>{{ $tiket->penerbangan->waktu_kedatangan }}</strong>
+                        <!-- <br>{{ \Carbon\Carbon::parse($tiket->penerbangan->waktu_kedatangan) }}</td> -->
+                        <td style="padding-left:20px;">{{ $tiket->penerbangan->bandara_tujuan }}</td>
                     </tr>
                 </table>
             </div>
@@ -272,7 +272,7 @@
         const month = months[today.getMonth()];
         const year = today.getFullYear();
 
-        const formattedDate = ${dayName}, ${day} ${month} ${year};
+        const formattedDate = `${dayName}, ${day} ${month} ${year}`;
 
         document.getElementById('current-date').textContent = formattedDate;
     </script>
@@ -281,10 +281,10 @@
     <div class="container p-4">
         <div class="row align-items-center">
             <div class="col-lg-6 text-lg-start">
-                <h1><strong>IDR 890.000</strong></h1>
+                <h1><strong>IDR {{ number_format($tiket->harga, 0, ',', '.') }}</strong></h1>
             </div>
             <div class="col-lg-6 text-lg-end">
-                <a href="{{ url('/formPemesanan') }}" class="btn btn-primary btn-lg">Pesan Sekarang</a>
+                <a href="{{ url('/formPemesanan/'.$tiket->id_penerbangan) }}" class="btn btn-primary btn-lg">Pesan Sekarang</a>
             </div>
         </div>
     </div>

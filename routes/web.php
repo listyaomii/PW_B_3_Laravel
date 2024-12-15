@@ -3,6 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TiketController;
+use App\Http\Controllers\PenerbanganController;
+use App\Http\Controllers\PemesananController;
+use App\Http\Controllers\PembayaranController;
+use App\Http\Controllers\PenumpangController;
+use App\Http\Controllers\RefundController;
+use App\Http\Controllers\AdminController;
 
 
 Route::get('/home', function () {
@@ -43,10 +49,16 @@ Route::get('/pesanan', function () {
 Route::get('/tiket', [TiketController::class, 'showSearchForm'])->name('tiket.form');
 Route::get('/tiket/search', [TiketController::class, 'search'])->name('tiket.search');
 Route::get('/tiketView', [TiketController::class, 'index'])->name('tiketView');
+Route::get('/tiketDetail/{id_penerbangan}', [TiketController::class, 'showDetail'])->name('tiketDetail');
+
+Route::get('/formPemesanan/{id_tiket}', [PemesananController::class, 'showForm'])->name('formPemesanan');
+Route::post('/penumpang/store', [PemesananController::class, 'store'])->name('penumpang.store');
 
 Route::get('/profile', function () {
     return view('profile');
 });
+
+// Route::resource('pemesanan', PemesananController::class);
 
 // Route::get('/tiketView', function () {
 //     return view('tiketView', [
@@ -89,9 +101,9 @@ Route::get('/tiketDetail', function(){
     return view('tiketDetail');
 });
 
-Route::get('/formPemesanan', function(){
-    return view('formPemesanan');
-});
+// Route::get('/formPemesanan', function(){
+//     return view('formPemesanan');
+// });
 
 Route::get('/pembayaran', function(){
     return view('pembayaran');

@@ -8,6 +8,14 @@ use Illuminate\Http\Request;
 
 class TiketController extends Controller
 {
+    public function showDetail($id_penerbangan)
+    {
+        // Eager load penerbangan
+        $tiket = Tiket::with('penerbangan')->findOrFail($id_penerbangan);
+        
+        return view('tiketDetail', compact('tiket'));
+    }
+    
     public function search(Request $request)
     {
         // Ambil input pencarian dari form

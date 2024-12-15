@@ -215,91 +215,92 @@
     <!-- form penumpang  -->
     <div class="d-flex justify-content-start">
         <div class="card ms-5 me-5">
-            <form onsubmit="return validateForm()">
-                <!-- radio  -->
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="tuan" value="Tuan">
-                    <label class="form-check-label" for="inlineRadio1">Tuan</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="nyonya" value="Nyonya">
-                    <label class="form-check-label" for="inlineRadio2">Nyonya</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="nona" value="Nona">
-                    <label class="form-check-label" for="inlineRadio3">Nona</label>
-                </div>
+        <form action="{{ route('penumpang.store') }}" method="POST" onsubmit="return validateForm()">
+            @csrf
+            <!-- radio  -->
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="tuan" value="Tuan">
+                <label class="form-check-label" for="inlineRadio1">Tuan</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="nyonya" value="Nyonya">
+                <label class="form-check-label" for="inlineRadio2">Nyonya</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="nona" value="Nona">
+                <label class="form-check-label" for="inlineRadio3">Nona</label>
+            </div>
 
-                <!-- Nama, hp, email -->
-                <div class="mb-3 mt-3">
-                    <label for="nama" class="form-label" style="font-size:16px;"><strong>Nama Lengkap</strong></label>
-                    <input type="text" class="form-control" id="nama" placeholder="Nama Depan & Nama Belakang penumpang" required>
-                </div>
-                <div class="mb-3 mt-2">
-                    <label for="email" class="form-label" style="font-size:16px;"><strong>E-mail</strong></label>
-                    <input type="text" class="form-control" id="email" placeholder="email@gmail.com" required>
-                </div>
-                <div class="mb-3 mt-2">
-                    <label for="identitas" class="form-label" style="font-size:16px;"><strong>Nomor Identitas</strong></label>
-                    <input type="text" class="form-control" id="identitas" placeholder="Nomor KTP/Passport" required>
-                </div>
-                <div class="mb-3 mt-2">
-                    <label for="hp" class="form-label" style="font-size:16px;"><strong>Nomor Telepon</strong></label>
-                    <input type="text" class="form-control" id="hp" placeholder="Masukkan 11-13 digit" required>
-                </div>
-                <div class="mb-3 mt-2">
-                    <label for="tglLahir" class="form-label" style="font-size:16px;"><strong>Tanggal Lahir</strong></label>
-                    <input type="date" class="form-control" id="tglLahir"required>
-                </div>
-                <div class="mb-3 mt-2">
-                    <label for="wargaNegara" class="form-label" style="font-size:16px;"><strong>Kewarganegaraan</strong></label>
-                    <select class="form-select form-select-sm" id="wargaNegara" aria-label="Medium select example" required>
-                        <option value="" disabled selected>pilih warga negara</option>
-                        <option value="indonesia">Indonesia</option>
-                        <option value="thailand">Thailand</option>
-                        <option value="malaysia">Malaysia</option>
-                        <option value="singapore">Singapore</option>
-                        <option value="filipina">Philipina</option>
-                        <option value="australia">Australia</option>
-                        <option value="korea">Korea Selatan</option>
-                        <option value="jepang">Jepang</option>
-                        <option value="kamboja">Kamboja</option>
-                    </select>
-                </div>
-                <footer class="text-center text-lg-center mt-5">
-                    <div class="container p-4">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <button type="submit" class="btn btn-primary btn-lg">Lanjutkan</a>
-                            </div>
+            <!-- Nama, hp, email -->
+            <div class="mb-3 mt-3">
+                <label for="nama" class="form-label" style="font-size:16px;"><strong>Nama Lengkap</strong></label>
+                <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Depan & Nama Belakang penumpang" required>
+            </div>
+            <!-- <div class="mb-3 mt-2">
+                <label for="email" class="form-label" style="font-size:16px;"><strong>E-mail</strong></label>
+                <input type="text" class="form-control" id="email" name="email" placeholder="email@gmail.com" required>
+            </div> -->
+            <div class="mb-3 mt-2">
+                <label for="identitas" class="form-label" style="font-size:16px;"><strong>Nomor Identitas</strong></label>
+                <input type="text" class="form-control" id="identitas" name="identitas" placeholder="Nomor KTP/Passport" required>
+            </div>
+            <div class="mb-3 mt-2">
+                <label for="hp" class="form-label" style="font-size:16px;"><strong>Nomor Telepon</strong></label>
+                <input type="text" class="form-control" id="hp" name="hp" placeholder="Masukkan 11-13 digit" required>
+            </div>
+            <div class="mb-3 mt-2">
+                <label for="tglLahir" class="form-label" style="font-size:16px;"><strong>Tanggal Lahir</strong></label>
+                <input type="date" class="form-control" id="tglLahir" name="tglLahir" required>
+            </div>
+            <div class="mb-3 mt-2">
+                <label for="wargaNegara" class="form-label" style="font-size:16px;"><strong>Kewarganegaraan</strong></label>
+                <select class="form-select form-select-sm" id="wargaNegara" name="wargaNegara" aria-label="Medium select example" required>
+                    <option value="" disabled selected>pilih warga negara</option>
+                    <option value="indonesia">Indonesia</option>
+                    <option value="thailand">Thailand</option>
+                    <option value="malaysia">Malaysia</option>
+                    <option value="singapore">Singapore</option>
+                    <option value="filipina">Philipina</option>
+                    <option value="australia">Australia</option>
+                    <option value="korea">Korea Selatan</option>
+                    <option value="jepang">Jepang</option>
+                    <option value="kamboja">Kamboja</option>
+                </select>
+            </div>
+            <footer class="text-center text-lg-center mt-5">
+                <div class="container p-4">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <button type="submit" class="btn btn-primary btn-lg">Lanjutkan</button>
                         </div>
                     </div>
-                </footer>
-            </form>
+                </div>
+            </footer>
+        </form>
+
         </div>
     </div>
 
-   <script>
-        const validateForm = () => {
-            const radioButtons = document.getElementsByName('inlineRadioOptions');
-            let isRadioSelected = false;
-            for (let radio of radioButtons) {
-                if (radio.checked) {
-                    isRadioSelected = true;
-                    break;
-                }
-            }
-
-            // Validasi setiap field
-            if (!isRadioSelected) {
-                alert("Pilih Tuan/Nyonya/Nona terlebih dahulu!");
-                return false;
-            }else{
-                alert("Data berhasil disimpan");
-                window.location.href = "{{url('/pembayaran')}}";
-                return false;
+    <script>
+    const validateForm = () => {
+        const radioButtons = document.getElementsByName('inlineRadioOptions');
+        let isRadioSelected = false;
+        for (let radio of radioButtons) {
+            if (radio.checked) {
+                isRadioSelected = true;
+                break;
             }
         }
-   </script>
+
+        // Validasi setiap field
+        if (!isRadioSelected) {
+            alert("Pilih Tuan/Nyonya/Nona terlebih dahulu!");
+            return false; // Cegah form disubmit
+        }
+
+        return true; // Jika validasi berhasil, form akan disubmit
+    }
+</script>
+
 </body>
 </html>

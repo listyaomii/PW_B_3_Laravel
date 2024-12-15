@@ -4,9 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Pemesanan;
 use Illuminate\Http\Request;
+use App\Models\Tiket;
+use App\Models\Penumpang;
 
 class PemesananController extends Controller
 {
+    public function showForm($id_tiket)
+    {
+        $tiket = Tiket::findOrFail($id_tiket);
+        return view('formPemesanan', compact('tiket'));
+    }
+    
     // Menampilkan semua data pemesanan
     public function index()
     {
@@ -26,22 +34,35 @@ class PemesananController extends Controller
         return response()->json($pemesanan);
     }
 
-    // Membuat pemesanan baru
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'id_tiket' => 'required|exists:tikets,tiket_id',
-            'id_penumpang' => 'required|exists:penumpangs,id_penumpang',
-            'tanggal_pemesanan' => 'required|date',
+        // Validasi data
+        $request->validate([
+            'nama_lengkap' => 'required|string',
+            'title_penumpang' => 'required|string',
+            'no_identitas' => 'required|string|unique:penumpangs',
+            'no_telp' => 'required|string|digits_between:10,13',
+            'tgl_lahir' => 'required|date',
+            'kewarganegaraan' => 'required|string',
         ]);
-
-        $pemesanan = Pemesanan::create($validatedData);
-
-        return response()->json([
-            'message' => 'Pemesanan berhasil ditambahkan.',
-            'pemesanan' => $pemesanan
-        ], 201);
+    
+        // Debug: cek data request
+        dd($request->all()); // Menampilkan data yang diterima dari form
+    
+        // Menyimpan data ke database
+        Penumpang::create([
+            'title_penumpang' => $request->input('inlineRadioOptions'),
+            'nama_lengkap' => $request->input('nama'),
+            'no_identitas' => $request->input('identitas'),
+            'no_telp' => $request->input('hp'),
+            'tgl_lahir' => $request->input('tglLahir'),
+            'kewarganegaraan' => $request->input('wargaNegara'),
+        ]);
+    
+        // Redirect setelah data disimpan
+        return redirect()->route('pembayaran');
     }
+    
 
     // Memperbarui data pemesanan
     public function update(Request $request, $id)

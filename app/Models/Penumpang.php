@@ -13,7 +13,6 @@ class Penumpang extends Model
 
     protected $fillable = [
         'nama_lengkap',
-        'bandara_tujuan',
         'title_penumpang',
         'no_identitas',
         'no_telp',

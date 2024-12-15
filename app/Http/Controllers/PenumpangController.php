@@ -10,8 +10,8 @@ class PenumpangController extends Controller
     // Menampilkan semua penumpang
     public function index()
     {
-        $penumpangs = Penumpang::all();
-        return response()->json($penumpangs);
+        $penumpangs = Penumpang::all(); // Ambil semua data penumpang
+        return view('penumpang.index', compact('penumpangs')); // Menampilkan view dengan data penumpang
     }
 
     // Menampilkan detail penumpang berdasarkan ID
@@ -20,18 +20,23 @@ class PenumpangController extends Controller
         $penumpang = Penumpang::find($id);
 
         if (!$penumpang) {
-            return response()->json(['message' => 'Penumpang tidak ditemukan.'], 404);
+            return redirect()->route('penumpang.index')->with('error', 'Penumpang tidak ditemukan.');
         }
 
-        return response()->json($penumpang);
+        return view('penumpang.show', compact('penumpang')); // Menampilkan detail penumpang
     }
 
     // Membuat penumpang baru
+    public function create()
+    {
+        return view('penumpang.create'); // Menampilkan form untuk menambah penumpang
+    }
+
     public function store(Request $request)
     {
+        // Validasi data
         $validatedData = $request->validate([
             'nama_lengkap' => 'required|string',
-            // 'bandara_tujuan' => 'required|string',
             'title_penumpang' => 'required|string',
             'no_identitas' => 'required|string|unique:penumpangs',
             'no_telp' => 'required|string|digits_between:10,13',
@@ -39,26 +44,35 @@ class PenumpangController extends Controller
             'kewarganegaraan' => 'required|string',
         ]);
 
-        $penumpang = Penumpang::create($validatedData);
+        // Membuat penumpang baru
+        Penumpang::create($validatedData);
 
-        return response()->json([
-            'message' => 'Penumpang berhasil ditambahkan.',
-            'penumpang' => $penumpang
-        ], 201);
+        return redirect()->route('pembayaran')->with('success', 'Penumpang berhasil ditambahkan.');
     }
 
     // Memperbarui data penumpang
+    public function edit($id)
+    {
+        $penumpang = Penumpang::find($id);
+
+        if (!$penumpang) {
+            return redirect()->route('penumpang.index')->with('error', 'Penumpang tidak ditemukan.');
+        }
+
+        return view('penumpang.edit', compact('penumpang')); // Menampilkan form untuk edit data penumpang
+    }
+
     public function update(Request $request, $id)
     {
         $penumpang = Penumpang::find($id);
 
         if (!$penumpang) {
-            return response()->json(['message' => 'Penumpang tidak ditemukan.'], 404);
+            return redirect()->route('penumpang.index')->with('error', 'Penumpang tidak ditemukan.');
         }
 
+        // Validasi data
         $validatedData = $request->validate([
             'nama_lengkap' => 'sometimes|string',
-            'bandara_tujuan' => 'sometimes|string',
             'title_penumpang' => 'sometimes|string',
             'no_identitas' => 'sometimes|string|unique:penumpangs,no_identitas,' . $id . ',id_penumpang',
             'no_telp' => 'sometimes|string|digits_between:10,13',
@@ -66,12 +80,10 @@ class PenumpangController extends Controller
             'kewarganegaraan' => 'sometimes|string',
         ]);
 
+        // Update data penumpang
         $penumpang->update($validatedData);
 
-        return response()->json([
-            'message' => 'Penumpang berhasil diperbarui.',
-            'penumpang' => $penumpang
-        ]);
+        return redirect()->route('penumpang.index')->with('success', 'Penumpang berhasil diperbarui.');
     }
 
     // Menghapus penumpang
@@ -80,11 +92,12 @@ class PenumpangController extends Controller
         $penumpang = Penumpang::find($id);
 
         if (!$penumpang) {
-            return response()->json(['message' => 'Penumpang tidak ditemukan.'], 404);
+            return redirect()->route('penumpang.index')->with('error', 'Penumpang tidak ditemukan.');
         }
 
+        // Hapus penumpang
         $penumpang->delete();
 
-        return response()->json(['message' => 'Penumpang berhasil dihapus.']);
+        return redirect()->route('penumpang.index')->with('success', 'Penumpang berhasil dihapus.');
     }
 }
